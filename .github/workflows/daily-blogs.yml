@@ -1,0 +1,43 @@
+name: RegularPost Daily Schedule
+
+on:
+  workflow_dispatch:
+  schedule:
+    # IST 07:00
+    - cron: "30 1 * * *"
+    # IST 09:00
+    - cron: "30 3 * * *"
+    # IST 12:00
+    - cron: "30 6 * * *"
+    # IST 15:00
+    - cron: "30 9 * * *"
+    # IST 18:00
+    - cron: "30 12 * * *"
+    # IST 21:00
+    - cron: "30 15 * * *"
+
+jobs:
+  daily-post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show scheduled slot
+        run: |
+          echo "RegularPost scheduled run"
+          echo "UTC: $(date -u)"
+          echo "IST: $(TZ=Asia/Kolkata date)"
+
+      # Content generation/publishing can be connected here.
+      # Required secrets/API credentials depend on the target website.
+      - name: Verify content folders
+        run: |
+          test -d "Daily Blogs/Movie Updates"
+          test -d "Daily Blogs/News Updates"
+          test -d "Daily Blogs/Google Updates"
+          test -d "Daily Blogs/Tech News"
+          test -d "Daily Blogs/Trending News"
+          test -d "Daily Blogs/OTT Updates"
+          test -d "Daily Blogs/Box Office Updates"
+          echo "All RegularPost categories are ready."
