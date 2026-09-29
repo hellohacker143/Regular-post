@@ -3,51 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RegularPost — Daily Blogs</title>
-<meta name="description" content="RegularPost daily blog dashboard for Movie, News, Google, Tech, Trending, OTT and Box Office updates.">
+<title>RegularPost — All Blogs</title>
+<meta name="description" content="All RegularPost blogs in one page.">
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172033}
-header{background:#111827;color:#fff;padding:22px 16px;position:sticky;top:0;z-index:5}.head{max-width:1120px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-size:25px;font-weight:800}.brand span{color:#60a5fa}.sub{font-size:13px;color:#cbd5e1;margin-top:4px}
+header{background:#111827;color:#fff;padding:22px 16px;position:sticky;top:0;z-index:10}.head{max-width:1120px;margin:auto}.brand{font-size:26px;font-weight:800}.brand span{color:#60a5fa}.sub{font-size:13px;color:#cbd5e1;margin-top:4px}
 nav{display:flex;gap:7px;overflow:auto;white-space:nowrap;padding-top:15px;max-width:1120px;margin:auto}nav button{border:0;background:#1f2937;color:#e5e7eb;padding:9px 12px;border-radius:20px;cursor:pointer}nav button.active,nav button:hover{background:#fff;color:#111827}
 .container{max-width:1120px;margin:24px auto;padding:0 16px}.search{width:100%;padding:14px 16px;border:1px solid #dbe1ea;border-radius:12px;font-size:16px;margin-bottom:20px;background:#fff}
-.categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:28px}.category{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:17px;cursor:pointer}.category:hover,.category.active{border-color:#111827;box-shadow:0 5px 16px #0000000d}.category h3{margin:0 0 6px;font-size:16px}.category p{margin:0;color:#64748b;font-size:13px}
+.categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:28px}.category{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:17px;cursor:pointer}.category:hover,.category.active{border-color:#111827}.category h3{margin:0 0 6px;font-size:16px}.category p{margin:0;color:#64748b;font-size:13px}
 .section{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px}.section h2{margin:0;font-size:22px}.count{color:#64748b;font-size:14px}
-.blogs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.blog{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px}.tag{display:inline-block;background:#eef2ff;padding:5px 9px;border-radius:20px;font-size:12px;margin-bottom:11px}.blog h3{margin:0 0 9px;font-size:18px;line-height:1.3}.blog p{color:#64748b;font-size:14px;line-height:1.5;margin:0 0 13px}.read{display:inline-block;color:#2563eb;text-decoration:none;font-weight:700}
-.sample{background:#fff;border:1px solid #dbeafe;border-radius:16px;padding:20px;margin-bottom:26px}.sample .label{font-size:12px;font-weight:700;color:#2563eb}.sample h2{margin:7px 0}.sample p{color:#64748b;line-height:1.5}.sample a{display:inline-block;background:#111827;color:#fff;padding:10px 14px;border-radius:9px;text-decoration:none}
-.empty{background:#fff;border:1px dashed #cbd5e1;border-radius:14px;padding:35px;text-align:center;color:#64748b}footer{text-align:center;padding:30px;color:#64748b;font-size:13px}
+.blogs{display:grid;grid-template-columns:1fr;gap:18px}.blog{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px}.tag{display:inline-block;background:#eef2ff;padding:5px 9px;border-radius:20px;font-size:12px;margin-bottom:11px}.blog h1,.blog h2,.blog h3{line-height:1.3}.blog h1{font-size:28px;margin:5px 0 8px}.blog h2{font-size:21px;margin-top:25px}.blog p,.blog li{font-size:16px;line-height:1.7;color:#374151}.meta{font-size:13px;color:#64748b;margin-bottom:16px}.empty{background:#fff;border:1px dashed #cbd5e1;border-radius:14px;padding:35px;text-align:center;color:#64748b}footer{text-align:center;padding:30px;color:#64748b;font-size:13px}
 </style>
 </head>
 <body>
-<header>
-<div class="head"><div><div class="brand">Regular<span>Post</span></div><div class="sub">Daily Blogs & Updates</div></div></div>
-<nav id="nav"></nav>
-</header>
+<header><div class="head"><div class="brand">Regular<span>Post</span></div><div class="sub">All Daily Blogs — Everything on one page</div><nav id="nav"></nav></div></header>
 <main class="container">
-<div class="sample"><div class="label">SAMPLE POST</div><h2>5 Things to Check Before Watching a New Telugu Movie</h2><p>A sample Movie Updates article showing how your future posts will appear in the RegularPost dashboard.</p><a href="https://github.com/hellohacker143/Regular-post/blob/main/Daily%20Blogs/Movie%20Updates/sample-telugu-movie-blog.md" target="_blank">Read Sample Post →</a></div>
 <input id="search" class="search" type="search" placeholder="🔍 Search blogs...">
 <div id="categories" class="categories"></div>
 <div class="section"><h2 id="title">All Blogs</h2><span id="count" class="count"></span></div>
-<div id="blogs" class="blogs"><div class="empty">Loading blogs...</div></div>
+<div id="blogs" class="blogs"><div class="empty">Loading all blogs...</div></div>
 </main>
-<footer>RegularPost • Daily content dashboard</footer>
+<footer>RegularPost • All blogs displayed on this page</footer>
 <script>
 const owner="hellohacker143",repo="Regular-post",branch="main";
 const wanted=["Movie Updates","News Updates","Google Updates","Tech News","Trending News","OTT Updates","Box Office Updates"];
 let allBlogs=[],selected="All Blogs";
-async function getJSON(url){const r=await fetch(url);if(!r.ok)throw new Error("GitHub request failed");return r.json()}
-async function load(){try{const root=await getJSON(`https://api.github.com/repos/${owner}/${repo}/contents/Daily%20Blogs?ref=${branch}`);renderCategories(root);for(const folder of root.filter(x=>x.type==="dir")){const items=await getJSON(folder.url+"?ref="+branch);for(const item of items.filter(x=>x.type==="file"&&!itemIsHidden(x.name)))allBlogs.push({name:item.name,url:item.html_url,category:folder.name})}render()}catch(e){document.getElementById("blogs").innerHTML='<div class="empty">Unable to load blogs right now.</div>'}}
+async function getJSON(url){const r=await fetch(url);if(!r.ok)throw new Error("Request failed");return r.json()}
+async function load(){
+ try{
+  const root=await getJSON(`https://api.github.com/repos/${owner}/${repo}/contents/Daily%20Blogs?ref=${branch}`);
+  renderCategories(root);
+  for(const folder of root.filter(x=>x.type==="dir")){
+   const items=await getJSON(folder.url+"?ref="+branch);
+   for(const item of items.filter(x=>x.type==="file"&&!itemIsHidden(x.name))){
+    try{const raw=await fetch(item.download_url).then(r=>r.text());allBlogs.push({name:item.name,category:folder.name,content:formatContent(raw,item.name)})}catch(e){}
+   }
+  }
+  render();
+ }catch(e){document.getElementById("blogs").innerHTML='<div class="empty">Unable to load blogs right now.</div>'}
+}
 function itemIsHidden(name){return name.startsWith(".")||name.endsWith(".gitkeep")}
 function renderCategories(root){
- const names=root.filter(x=>x.type==="dir").map(x=>x.name);const cats=wanted.filter(x=>names.includes(x));const nav=document.getElementById("nav");
- nav.innerHTML='<button class="active" data-cat="All Blogs">All Blogs</button>'+cats.map(c=>'<button data-cat="'+escapeHTML(c)+'">'+icon(c)+' '+escapeHTML(c)+'</button>').join("");
- nav.querySelectorAll("button").forEach(b=>b.onclick=()=>select(b.dataset.cat));
- document.getElementById("categories").innerHTML='<div class="category active" data-cat="All Blogs"><h3>📚 All Blogs</h3><p>View every blog</p></div>'+cats.map(c=>'<div class="category" data-cat="'+escapeHTML(c)+'"><h3>'+icon(c)+' '+escapeHTML(c)+'</h3><p>View latest '+escapeHTML(c.toLowerCase())+'</p></div>').join("");
- document.querySelectorAll(".category").forEach(c=>c.onclick=()=>select(c.dataset.cat));
+ const names=root.filter(x=>x.type==="dir").map(x=>x.name),cats=wanted.filter(x=>names.includes(x));
+ const buttons='<button class="active" data-cat="All Blogs">All Blogs</button>'+cats.map(c=>'<button data-cat="'+escapeHTML(c)+'">'+icon(c)+' '+escapeHTML(c)+'</button>').join("");
+ document.getElementById("nav").innerHTML=buttons;
+ document.getElementById("categories").innerHTML='<div class="category active" data-cat="All Blogs"><h3>📚 All Blogs</h3><p>Everything on one page</p></div>'+cats.map(c=>'<div class="category" data-cat="'+escapeHTML(c)+'"><h3>'+icon(c)+' '+escapeHTML(c)+'</h3><p>Show all posts</p></div>').join("");
+ document.querySelectorAll("[data-cat]").forEach(x=>x.onclick=()=>select(x.dataset.cat));
 }
 function select(cat){selected=cat;document.querySelectorAll("[data-cat]").forEach(x=>x.classList.toggle("active",x.dataset.cat===cat));render()}
-function render(){const q=document.getElementById("search").value.toLowerCase();const data=allBlogs.filter(x=>(selected==="All Blogs"||x.category===selected)&&(!q||x.name.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)));document.getElementById("title").textContent=selected;document.getElementById("count").textContent=data.length+" blog"+(data.length===1?"":"s");document.getElementById("blogs").innerHTML=data.length?data.map(x=>'<article class="blog"><span class="tag">'+icon(x.category)+' '+escapeHTML(x.category)+'</span><h3>'+escapeHTML(clean(x.name))+'</h3><p>Published in RegularPost • Open the article to read the full post.</p><a class="read" href="'+x.url+'" target="_blank" rel="noopener">Read blog →</a></article>').join(""):'<div class="empty">No blogs found in this category.</div>'}
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const data=allBlogs.filter(x=>(selected==="All Blogs"||x.category===selected)&&(!q||x.name.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)||x.content.toLowerCase().includes(q)));
+ document.getElementById("title").textContent=selected;document.getElementById("count").textContent=data.length+" blog"+(data.length===1?"":"s");
+ document.getElementById("blogs").innerHTML=data.length?data.map(x=>'<article class="blog"><span class="tag">'+icon(x.category)+' '+escapeHTML(x.category)+'</span>'+x.content+'</article>').join(""):'<div class="empty">No blogs found.</div>';
+}
+function formatContent(raw,name){
+ if(/\.html?$/i.test(name)){
+  const doc=new DOMParser().parseFromString(raw,"text/html");doc.querySelectorAll("script,style,nav,header,footer").forEach(x=>x.remove());
+  const body=doc.body.innerHTML;
+  return body||'<h1>'+escapeHTML(clean(name))+'</h1><p>No article content.</p>';
+ }
+ return markdown(raw);
+}
+function markdown(s){
+ let x=escapeHTML(s);
+ x=x.replace(/^### (.*)$/gm,"<h3>$1</h3>").replace(/^## (.*)$/gm,"<h2>$1</h2>").replace(/^# (.*)$/gm,"<h1>$1</h1>");
+ x=x.replace(/^\*\*(.*?)\*\*$/gm,"<p><strong>$1</strong></p>");
+ x=x.replace(/^> (.*)$/gm,"<blockquote>$1</blockquote>");
+ x=x.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>");
+ x=x.replace(/\n\n/g,"</p><p>").replace(/\n/g,"<br>");
+ return "<div><p>"+x+"</p></div>";
+}
 function clean(n){return n.replace(/\.(md|html|txt)$/i,"").replace(/[-_]/g," ")}
-function escapeHTML(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function icon(c){return {"Movie Updates":"🎬","News Updates":"📰","Google Updates":"🔎","Tech News":"💻","Trending News":"🔥","OTT Updates":"📺","Box Office Updates":"💰"}[c]||"📄"}
 document.getElementById("search").addEventListener("input",render);load();
 </script>
