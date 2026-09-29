@@ -1,13 +1,13 @@
-name: RegularPost Hourly Schedule
+name: RegularPost 10 Minute Schedule
 
 on:
   workflow_dispatch:
   schedule:
-    # Every hour at 30 minutes, UTC = every hour at :00 IST
-    - cron: "30 * * * *"
+    # Every 10 minutes (GitHub Actions uses UTC)
+    - cron: "*/10 * * * *"
 
 jobs:
-  hourly-post:
+  ten-minute-post:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,7 +15,7 @@ jobs:
 
       - name: Show current schedule time
         run: |
-          echo "RegularPost hourly run"
+          echo "RegularPost 10-minute run"
           echo "UTC: $(date -u)"
           echo "IST: $(TZ=Asia/Kolkata date)"
 
