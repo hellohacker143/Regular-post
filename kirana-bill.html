@@ -202,35 +202,27 @@ function addRow(item={name:"",qty:1,rate:0}){
 function addQuickProducts(){
  const box=$("quickProducts"), message=$("quickMessage");
  const input=box.value.trim();
- if(!input){message.textContent="Type products, e.g. chams 5 90 kings 219 5 american 7 120";return}
- const tokens=input.replace(/,/g," ").split(/\s+/);
+ if(!input){message.textContent="Type 50 /120 for quantity 50 at ₹120 each, or American 5 108.";return}
  const parsed=[], errors=[];
- let nameParts=[], i=0;
- while(i<tokens.length){
-   if(/^\d+(?:\.\d+)?$/.test(tokens[i])){
-     if(!nameParts.length || i+1>=tokens.length || !/^\d+(?:\.\d+)?$/.test(tokens[i+1])){
-       errors.push(tokens[i]); i++; continue;
-     }
-     const a=Number(tokens[i]), b=Number(tokens[i+1]);
-     // Accept either Quantity Rate (5 90) or Rate Quantity (219 5).
-     // For normal shop bills, the smaller number is treated as quantity.
-     const qty=Math.min(a,b), rate=Math.max(a,b);
-     parsed.push({name:nameParts.join(" "),qty,rate});
-     nameParts=[]; i+=2;
-   }else{
-     nameParts.push(tokens[i]); i++;
+ const lines=input.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+ for(const line of lines){
+   const direct=line.match(/^(\d+(?:\.\d+)?)\s*(?:\/|\*|x|X)\s*(\d+(?:\.\d+)?)$/);
+   if(direct){parsed.push({name:"",qty:Number(direct[1]),rate:Number(direct[2])});continue}
+   const tokens=line.replace(/,/g," ").split(/\s+/);
+   let nameParts=[], i=0, found=false;
+   while(i<tokens.length){
+     if(/^\d+(?:\.\d+)?$/.test(tokens[i]) && i+1<tokens.length && /^\d+(?:\.\d+)?$/.test(tokens[i+1])){
+       parsed.push({name:nameParts.join(" "),qty:Number(tokens[i]),rate:Number(tokens[i+1])});
+       nameParts=[];i+=2;found=true;
+     }else{nameParts.push(tokens[i]);i++}
    }
+   if(nameParts.length||!found)errors.push(line);
  }
- if(nameParts.length) errors.push(nameParts.join(" "));
- parsed.forEach(item=>addRow(item));
  if(parsed.length){
-   box.value="";
-   message.textContent=parsed.length+" product(s) added. Amounts and grand total calculated automatically."+(errors.length?" Please check unread text: "+errors.join(", "):"");
+   parsed.forEach(item=>addRow(item));box.value="";
+   message.textContent=parsed.length+" item(s) added. Product name can be blank; totals calculated automatically."+(errors.length?" Could not read: "+errors.join("; "):"");
    calculate();
-   closeQuickModal();
- }else{
-   message.textContent="Could not read products. Example: chams 5 90 kings 219 5 american 7 120";
- }
+ }else{message.textContent="Could not read entry. Try 50 /120, 5*108, or American 5 108."}
 }
 $("addQuickProducts").addEventListener("click",addQuickProducts);
 $("clearQuickProducts").addEventListener("click",()=>{$("quickProducts").value="";$("quickMessage").textContent="Entry cleared.";$("quickProducts").focus()});
