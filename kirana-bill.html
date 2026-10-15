@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAI KIRANA STORE — Receipt</title>
+<meta name="description" content="Printable SAI KIRANA STORE receipt template with editable items and automatic totals.">
+<style>
+:root{--ink:#000;--paper:#fff;--page:#eef1f5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.toolbar{max-width:900px;margin:18px auto 10px;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.toolbar strong{font-size:18px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer;background:#111827;color:white}
+button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
+.note{max-width:900px;margin:0 auto 12px;padding:0 14px;color:#475569;font-size:13px}
+.receipt{width:min(100% - 20px,720px);margin:0 auto 30px;padding:28px 24px 25px;background:var(--paper);box-shadow:0 4px 24px #0f172a14}
+.store-name{font-family:Impact,"Arial Narrow",sans-serif;font-weight:900;font-size:clamp(36px,7.1vw,66px);letter-spacing:-1.1px;line-height:1.05;text-align:center;text-transform:uppercase;margin:0 0 17px;white-space:nowrap}
+.dash{border:0;border-top:4px dashed var(--ink);margin:14px 0}
+.bill-info,.items-table,.summary,.thank-you,.footer-slogan{font-family:"Roboto Condensed","Arial Narrow",Impact,sans-serif;font-weight:800}
+.bill-info{font-size:clamp(18px,4.1vw,31px);line-height:1.34}
+.info-row{display:grid;grid-template-columns:135px 1fr;gap:8px}
+.time-cashier{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.items-wrap{width:100%;overflow-x:auto}
+.items-table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:clamp(15px,3.45vw,27px)}
+.items-table th,.items-table td{padding:8px 2px;text-align:left;vertical-align:top}
+.items-table th{font-size:clamp(15px,3.5vw,28px);white-space:nowrap}
+.items-table .num{width:8%}.items-table .item{width:29%;white-space:normal;overflow-wrap:anywhere}.items-table .qty{width:11%;text-align:center}.items-table .rate{width:22%;text-align:right;white-space:nowrap}.items-table .amount{width:30%;text-align:right;white-space:nowrap}
+.items-table input{font:inherit;font-weight:800;color:#000;border:0;border-bottom:1px dotted #999;border-radius:0;background:transparent;width:100%;min-width:0;padding:0;outline-offset:2px}
+.items-table input[type=number]{text-align:right}
+.items-table .qty input{text-align:center}
+.items-table .rate input{text-align:right}
+.summary{font-size:clamp(19px,4.2vw,31px);line-height:1.4}
+.summary-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.total-items{margin-top:3px}
+.grand-total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:Impact,"Arial Narrow",sans-serif;font-weight:900;font-size:clamp(28px,6.5vw,49px);letter-spacing:-.6px;line-height:1.12;margin:8px 0;white-space:nowrap}
+.thank-you{text-align:center;font-size:clamp(25px,5vw,38px);line-height:1.4;letter-spacing:1px;margin:17px 0}
+.footer-slogan{text-align:center;font-size:clamp(16px,3.8vw,29px);line-height:1.35;white-space:normal}
+.smallprint{text-align:center;font:12px Arial,sans-serif;margin-top:12px;color:#333}
+@media(max-width:430px){.receipt{padding:20px 10px}.info-row{grid-template-columns:100px 1fr}.dash{border-top-width:3px;margin:11px 0}.items-table th,.items-table td{padding:7px 1px}.grand-total{letter-spacing:-1px}}
+@media print{
+ @page{size:80mm auto;margin:3mm}
+ body{background:white}
+ .toolbar,.note,.smallprint{display:none!important}
+ .receipt{width:74mm;max-width:none;margin:0;padding:0;box-shadow:none}
+ .store-name{font-size:24pt;letter-spacing:-.5px;margin-bottom:8px}
+ .dash{border-top-width:1.5px;margin:6px 0}
+ .bill-info{font-size:11pt}
+ .info-row{grid-template-columns:27mm 1fr;gap:1mm}
+ .time-cashier{font-size:10pt;gap:1mm}
+ .items-table{font-size:9pt}
+ .items-table th{font-size:9pt}
+ .items-table th,.items-table td{padding:3px 0}
+ .summary{font-size:10pt}
+ .grand-total{font-size:15pt;letter-spacing:-.4px}
+ .thank-you{font-size:12pt;margin:8px 0}
+ .footer-slogan{font-size:9pt}
+ .items-table input{border:0}
+}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <strong>🧾 SAI KIRANA STORE — Bill Preview</strong>
+  <div class="actions">
+    <button class="secondary" type="button" id="addItem">+ Add item</button>
+    <button class="secondary" type="button" id="resetBill">Reset sample</button>
+    <button type="button" id="printBill">Print receipt</button>
+  </div>
+</div>
+<p class="note">Edit the bill number, date, products, quantities and rates below. Amounts and totals update automatically. Use “Print receipt” to print or save as PDF.</p>
+<section class="receipt" id="receipt">
+  <h1 class="store-name">SAI KIRANA STORE</h1>
+  <hr class="dash">
+  <div class="bill-info">
+    <div class="info-row"><span>BILL NO:</span><input aria-label="Bill number" id="billNo" value="00123"></div>
+    <div class="info-row"><span>DATE :</span><input aria-label="Bill date" id="billDate" value=""></div>
+    <div class="time-cashier"><span>TIME : <input aria-label="Bill time" id="billTime" value="" style="width:105px;font:inherit;font-weight:inherit;border:0;background:transparent"></span><span>CASHIER: <input aria-label="Cashier number" id="cashier" value="01" style="width:35px;font:inherit;font-weight:inherit;border:0;background:transparent"></span></div>
+  </div>
+  <hr class="dash">
+  <div class="items-wrap">
+  <table class="items-table">
+    <thead><tr><th class="num">NO</th><th class="item">ITEM</th><th class="qty">QTY</th><th class="rate">RATE</th><th class="amount">AMOUNT</th></tr></thead>
+    <tbody id="itemRows"></tbody>
+  </table>
+  </div>
+  <hr class="dash">
+  <div class="summary">
+    <div class="summary-row"><span>SUBTOTAL</span><span id="subtotal">₹9,729.00</span></div>
+    <div class="summary-row"><span>DISCOUNT</span><span><label for="discount" style="position:absolute;left:-9999px">Discount in rupees</label><input id="discount" type="number" min="0" step=".01" value="0" style="width:100px;text-align:right;font:inherit;font-weight:inherit;border:0;background:transparent;padding:0"></span></div>
+    <div class="total-items">TOTAL ITEMS: <span id="totalQty">63</span></div>
+  </div>
+  <div class="grand-total"><span>GRAND TOTAL</span><span id="grandTotal">₹9,729.00</span></div>
+  <hr class="dash">
+  <div class="thank-you">THANK YOU!<br>VISIT AGAIN</div>
+  <hr class="dash">
+  <div class="footer-slogan">QUALITY PRODUCTS&nbsp; | &nbsp;BETTER PRICES</div>
+  <div class="smallprint">Thank you for shopping with us.</div>
+</section>
+<script>
+const sample=[
+ {name:"American",qty:11,rate:120},
+ {name:"Chams",qty:20,rate:90},
+ {name:"Kings",qty:11,rate:219},
+ {name:"Rrcoin",qty:21,rate:200}
+];
+const $=id=>document.getElementById(id);
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function today(){const d=new Date();return [String(d.getDate()).padStart(2,"0"),String(d.getMonth()+1).padStart(2,"0"),d.getFullYear()].join("-")}
+function nowTime(){return new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true})}
+function addRow(item={name:"",qty:1,rate:0}){
+ const tr=document.createElement("tr");
+ tr.innerHTML='<td class="num"></td><td class="item"><input aria-label="Product name" class="product" maxlength="48"></td><td class="qty"><input aria-label="Quantity" class="quantity" type="number" min="0" step="1"></td><td class="rate"><input aria-label="Rate in rupees" class="price" type="number" min="0" step=".01"></td><td class="amount line-total">₹0.00</td>';
+ tr.querySelector(".product").value=item.name;
+ tr.querySelector(".quantity").value=item.qty;
+ tr.querySelector(".price").value=item.rate;
+ tr.querySelectorAll("input").forEach(el=>el.addEventListener("input",calculate));
+ $("itemRows").appendChild(tr);calculate();
+}
+function calculate(){
+ let subtotal=0,qtyTotal=0;
+ [...$("itemRows").rows].forEach((tr,i)=>{
+  tr.querySelector(".num").textContent=i+1;
+  const qty=Math.max(0,Number(tr.querySelector(".quantity").value)||0);
+  const rate=Math.max(0,Number(tr.querySelector(".price").value)||0);
+  const amount=qty*rate;subtotal+=amount;qtyTotal+=qty;
+  tr.querySelector(".line-total").textContent=money(amount);
+ });
+ const discount=Math.min(subtotal,Math.max(0,Number($("discount").value)||0));
+ $("subtotal").textContent=money(subtotal);
+ $("totalQty").textContent=qtyTotal.toLocaleString("en-IN");
+ $("grandTotal").textContent=money(subtotal-discount);
+}
+function reset(){ $("itemRows").innerHTML="";sample.forEach(addRow);$("billNo").value="00123";$("billDate").value=today();$("billTime").value=nowTime();$("cashier").value="01";$("discount").value="0";calculate()}
+$("addItem").addEventListener("click",()=>{addRow();const rows=$("itemRows").querySelectorAll(".product");rows[rows.length-1].focus()});
+$("resetBill").addEventListener("click",reset);
+$("printBill").addEventListener("click",()=>window.print());
+$("discount").addEventListener("input",calculate);
+reset();
+</script>
+</body>
+</html>
