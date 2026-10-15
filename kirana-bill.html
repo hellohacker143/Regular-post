@@ -177,7 +177,8 @@ $("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.v
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
-$("toggleBillView").addEventListener("click",()=>{const only=document.body.classList.toggle("bill-only");$("toggleBillView").textContent=only?"↩️":"👁️";updateVisibleRows();$("toggleBillView").title=only?"Show full website":"Show bill only";$("toggleBillView").setAttribute("aria-label",$("toggleBillView").title);window.scrollTo({top:0,behavior:"smooth"});});
+$("toggleBillView").addEventListener("click",()=>{window.location.href="https://hellohacker143.github.io/Regular-post/";});
+
 function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
  if(!tab){alert("Please allow pop-ups for this page, then try again.");return}
