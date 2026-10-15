@@ -202,12 +202,21 @@ function addRow(item={name:"",qty:1,rate:0}){
 function addQuickProducts(){
  const box=$("quickProducts"), message=$("quickMessage");
  const input=box.value.trim();
- if(!input){message.textContent="Type 50 /120 for quantity 50 at ₹120 each, or American 5 108.";return}
+ if(!input){message.textContent="Enter one item per line, e.g. 245*1 or 35*6.";return}
  const parsed=[], errors=[];
  const lines=input.split(/\n+/).map(s=>s.trim()).filter(Boolean);
  for(const line of lines){
-   const direct=line.match(/^(\d+(?:\.\d+)?)\s*(?:\/|\*|x|X)\s*(\d+(?:\.\d+)?)$/);
-   if(direct){parsed.push({name:"",qty:Number(direct[1]),rate:Number(direct[2])});continue}
+   const direct=line.match(/^(\d+(?:\.\d+)?)\s*([/*xX])\s*(\d+(?:\.\d+)?)$/);
+   if(direct){
+     const a=Number(direct[1]), b=Number(direct[3]), op=direct[2];
+     // Slash means quantity/rate. For * or x, support common rate*quantity entries
+     // such as 245*1 and 35*6, while retaining 5*108 as quantity*rate.
+     let qty, rate;
+     if(op==="/"){qty=a;rate=b}
+     else if(b<=10 && a>b){rate=a;qty=b}
+     else {qty=a;rate=b}
+     parsed.push({name:"",qty,rate});continue;
+   }
    const tokens=line.replace(/,/g," ").split(/\s+/);
    let nameParts=[], i=0, found=false;
    while(i<tokens.length){
@@ -220,9 +229,9 @@ function addQuickProducts(){
  }
  if(parsed.length){
    parsed.forEach(item=>addRow(item));box.value="";
-   message.textContent=parsed.length+" item(s) added. Product name can be blank; totals calculated automatically."+(errors.length?" Could not read: "+errors.join("; "):"");
+   message.textContent=parsed.length+" item(s) added. Product names can be blank; totals calculated automatically."+(errors.length?" Could not read: "+errors.join("; "):"");
    calculate();
- }else{message.textContent="Could not read entry. Try 50 /120, 5*108, or American 5 108."}
+ }else{message.textContent="Could not read entries. Try 245*1, 35*6, or 50/120."}
 }
 $("addQuickProducts").addEventListener("click",addQuickProducts);
 $("clearQuickProducts").addEventListener("click",()=>{$("quickProducts").value="";$("quickMessage").textContent="Entry cleared.";$("quickProducts").focus()});
