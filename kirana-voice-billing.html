@@ -29,23 +29,32 @@ function parseSpeech(text){
  const raw=text.trim();let s=raw.toLowerCase().replace(/[₹,]/g," ").replace(/\s+/g," ").trim();
 
  $("liveCapture").style.display="block";$("capturedText").textContent=raw;
- // Product setup commands: "add product American rate 120" or
- // "bulk add products American rate 120, Chams rate 90, Kings rate 219".
- const productCmd = s.match(/^(?:(?:bulk)\\s+)?add\\s+products?\\s+(.+)$/);
+ // Product setup commands:
+ // Examples: "add Parle G 108, MOs 108, Liks 108",
+ // "add product American rate 120", or "bulk add products Chams 90, Kings 219".
+ // Only commands beginning with "add" enter product setup, so billing commands stay unchanged.
+ const productCmd = s.match(/^add\s+(.+)$/);
  if(productCmd){
-   const entries=productCmd[1].split(/[,;]|\\band\\b/).map(v=>v.trim()).filter(Boolean);
+   let payload=productCmd[1].trim().replace(/^products?\s+/,"").replace(/^bulk\s+products?\s+/,"");
+   const entries=payload.split(/[,;]|\band\b/).map(v=>v.trim()).filter(Boolean);
    const added=[],problems=[];
    for(const entry of entries){
-     const m=entry.match(/^(.+?)\\s+(?:rate\\s*)?(\\d+(?:\\.\\d{1,2})?)$/);
+     const m=entry.match(/^(.+?)\s+(?:rate\s*)?(\d+(?:\.\d{1,2})?)$/i);
      if(!m){problems.push(entry);continue}
-     const productName=m[1].replace(/\\brate\\s*$/i,"").trim(), productRate=Number(m[2]);
+     const productName=m[1].replace(/\brate\s*$/i,"").trim(), productRate=Number(m[2]);
      if(!productName||!Number.isFinite(productRate)||productRate<0){problems.push(entry);continue}
      const existing=db.products.find(x=>x.name.toLowerCase()===productName.toLowerCase()&&!x.variant);
      if(existing){existing.rate=productRate;added.push(productName+" updated ₹"+productRate)}
      else{db.products.push({id:uid(),name:productName,rate:productRate});added.push(productName+" ₹"+productRate)}
    }
-   if(added.length){save();renderProducts();$("capturedMath").textContent="Products saved: "+added.join(", ")+ (problems.length?"; Could not understand: "+problems.join(", "):"");$("voiceStatus").textContent="Saved "+added.length+" product(s). Say a product name and quantity to add it to the bill."}
-   else{$("capturedMath").textContent='Could not read product names and prices. Try: "bulk add products American rate 120, Chams rate 90".';$("voiceStatus").textContent="No products were saved. Please repeat the product names and rates clearly."}
+   if(added.length){
+     save();renderProducts();
+     $("capturedMath").textContent="Products saved: "+added.join(", ")+(problems.length?"; Could not understand: "+problems.join(", "):"");
+     $("voiceStatus").textContent="Saved "+added.length+" product(s). You can now say a product name and quantity to add it to the bill.";
+   }else{
+     $("capturedMath").textContent='Could not read product names and prices. Try: "Add Parle G 108, MOs 108, Liks 108".';
+     $("voiceStatus").textContent="No products were saved. Say Add, then each product name followed by its price.";
+   }
    return;
  }
  // Format A: product + spoken rate × quantity. Format B: product + quantity using saved product rate.
