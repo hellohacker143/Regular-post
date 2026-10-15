@@ -28,6 +28,15 @@ body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body
 #quickMessage{font-size:15px!important;line-height:1.45;margin-top:14px!important}
 @media(min-width:700px){.modal-overlay{align-items:center;justify-content:center;padding:24px}.modal-card{width:min(760px,100%);height:min(900px,calc(100dvh - 48px));max-height:calc(100dvh - 48px);border-radius:18px;padding:24px;box-shadow:0 24px 70px #0004}.modal-header{top:-24px}}
 
+.settings-modal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;background:#0f172a99}
+.settings-modal.is-open{display:flex}
+.settings-card{width:min(100%,420px);background:#fff;border-radius:16px;padding:20px;box-shadow:0 20px 60px #0004}
+.settings-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.settings-head h2{margin:0;font-size:22px}
+.settings-card label{display:block;font-weight:700;margin-bottom:8px}
+.settings-card input{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font:17px Arial;margin-bottom:14px}
+.settings-actions{display:flex;gap:10px;flex-wrap:wrap}
+.settings-help{color:#64748b;font-size:13px;line-height:1.4;margin:0 0 14px}
 .toolbar{max-width:900px;margin:18px auto 10px;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .toolbar strong{font-size:18px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -83,12 +92,23 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-m
 <div class="toolbar">
   <strong>🧾 SAI KIRANA STORE — Bill Preview</strong>
   <div class="actions">
+    <button class="secondary" type="button" id="settingsButton">⚙️ Settings</button>
     <button class="secondary" type="button" id="addItem">+ Add item / Bulk</button>
     <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
     <button class="secondary" type="button" id="resetBill">New empty bill</button>
     <button class="secondary" type="button" id="toggleBillView" aria-label="Show bill only" title="Show bill only">👁️</button>
     <button class="secondary" type="button" id="openBill">Open bill in new tab</button>
     <button type="button" id="printBill">Print receipt</button>
+  </div>
+</div>
+<div id="settingsModal" class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="settings-card">
+    <div class="settings-head"><h2 id="settingsTitle">⚙️ Shop Settings</h2><button type="button" id="closeSettings" class="modal-close" aria-label="Close settings">×</button></div>
+    <label for="shopNameInput">Shop name</label>
+    <input id="shopNameInput" type="text" maxlength="60" placeholder="Enter shop name">
+    <p class="settings-help">Your shop name is saved in this browser and will appear on the bill and printed receipt.</p>
+    <div class="settings-actions"><button type="button" id="saveShopName">Save shop name</button><button type="button" class="secondary" id="cancelSettings">Cancel</button></div>
+    <p id="settingsMessage" aria-live="polite" class="settings-help" style="margin-top:12px;margin-bottom:0"></p>
   </div>
 </div>
 <p class="note">Quick entry: type <b>American 5 108</b> and press Enter. You can paste multiple products, one per line. Amounts and totals update automatically.</p>
@@ -125,6 +145,31 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-m
 </section>
 <script>
 const $=id=>document.getElementById(id);
+const DEFAULT_SHOP_NAME="SAI KIRANA STORE";
+function getShopName(){try{return localStorage.getItem("kiranaShopName")||DEFAULT_SHOP_NAME}catch(e){return DEFAULT_SHOP_NAME}}
+function applyShopName(name){
+ const clean=(name||"").trim()||DEFAULT_SHOP_NAME;
+ document.querySelectorAll(".store-name").forEach(el=>el.textContent=clean);
+ const toolbarTitle=document.querySelector(".toolbar strong");
+ if(toolbarTitle) toolbarTitle.textContent="🧾 "+clean+" — Bill Preview";
+ document.title=clean+" — Receipt";
+ document.querySelector('meta[name="description"]')?.setAttribute("content","Printable "+clean+" receipt with editable items and automatic totals.");
+}
+function openSettings(){$("shopNameInput").value=getShopName();$("settingsMessage").textContent="";$("settingsModal").classList.add("is-open");document.body.style.overflow="hidden";setTimeout(()=>$("shopNameInput").focus(),80)}
+function closeSettings(){$("settingsModal").classList.remove("is-open");document.body.style.overflow=""}
+$("settingsButton").addEventListener("click",openSettings);
+$("closeSettings").addEventListener("click",closeSettings);
+$("cancelSettings").addEventListener("click",closeSettings);
+$("settingsModal").addEventListener("click",event=>{if(event.target===$("settingsModal"))closeSettings()});
+$("saveShopName").addEventListener("click",()=>{
+ const name=$("shopNameInput").value.trim();
+ if(!name){$("settingsMessage").textContent="Please enter a shop name.";return}
+ try{localStorage.setItem("kiranaShopName",name)}catch(e){$("settingsMessage").textContent="Could not save in this browser. Please check browser storage settings.";return}
+ applyShopName(name);$("settingsMessage").textContent="Shop name saved successfully!";
+ setTimeout(closeSettings,650);
+});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"){if($("settingsModal").classList.contains("is-open"))closeSettings();else if($("quickEntryModal").classList.contains("is-open"))closeQuickModal()}});
+
 function money(n){return "₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function today(){const d=new Date();return [String(d.getDate()).padStart(2,"0"),String(d.getMonth()+1).padStart(2,"0"),d.getFullYear()].join("-")}
 function nowTime(){return new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true})}
@@ -244,6 +289,7 @@ function openBillInNewTab(hideBillInfo=true, autoPrint=false){
 }
 $("printBill").addEventListener("click",()=>openBillInNewTab(false,true));
 $("discount").addEventListener("input",calculate);
+applyShopName(getShopName());
 reset();
 </script>
 </body>
