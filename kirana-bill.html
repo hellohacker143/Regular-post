@@ -181,6 +181,7 @@ function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
  if(!tab){alert("Please allow pop-ups for this page, then try again.");return}
  const clone=$("receipt").cloneNode(true);
+ // The new tab must contain only the receipt, without the main editor or entry controls.
  // In the clean bill preview, hide bill number, date, time, and cashier details.
  const info=clone.querySelector(".bill-info");
  if(hideBillInfo && info) info.remove();
