@@ -9,70 +9,16 @@
 :root{--ink:#000;--paper:#fff;--page:#eef1f5}
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
-body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body.bill-only .quick-entry{display:none!important}body.bill-only .receipt{width:min(100% - 12px,720px);margin:8px auto;padding:20px 12px;box-shadow:none}body.bill-only #toggleBillView{display:block!important;position:fixed;top:8px;right:8px;z-index:1000;border-radius:50%;width:42px;height:42px;padding:0;font-size:20px;box-shadow:0 2px 8px #0002}
+body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body.bill-only #quickEntryModal{display:none!important}body.bill-only .receipt{width:min(100% - 12px,720px);margin:8px auto;padding:20px 12px;box-shadow:none}body.bill-only #toggleBillView{display:block!important;position:fixed;top:8px;right:8px;z-index:1000;border-radius:50%;width:42px;height:42px;padding:0;font-size:20px;box-shadow:0 2px 8px #0002}
 
-/* Quick / bulk entry popup */
-/* Full-screen quick-entry popup matching the mobile screen reference */
-.modal-overlay{position:fixed;inset:0;z-index:4000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.48)}
-.modal-overlay.is-open{display:flex}
-#quickEntryModal{position:fixed!important;inset:0!important;z-index:99999!important;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.48)}
-#quickEntryModal.is-open{display:flex!important}
-#quickEntryModal .modal-card{position:relative!important;display:flex!important;flex-direction:column;width:min(92vw,390px)!important;max-width:390px!important;min-width:0!important;max-height:70dvh;overflow-y:auto;background:#fff!important;color:#111827;border:1px solid #e2e8f0;border-radius:14px;padding:12px;box-shadow:0 18px 55px #0004;gap:8px}
-#quickEntryModal .quick-entry{display:flex!important;flex-direction:column;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important;box-shadow:none!important;border-radius:0!important}
-#quickEntryModal textarea{display:block!important;position:static!important;width:100%!important;min-width:0!important;min-height:115px;max-height:30dvh;flex:none;resize:vertical;font-size:16px!important;padding:12px!important;border:1px solid #cbd5e1!important;border-radius:10px!important}
-.modal-header{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0;padding:0;background:#fff;z-index:2}
-.modal-title{display:none}
-.modal-close{flex:0 0 40px;width:40px;height:40px;padding:0;border-radius:50%;font-size:25px;line-height:1;background:#f1f5f9;color:#111827;border:1px solid #cbd5e1}
-.modal-help{display:none}
-.modal-card .quick-entry{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important;border-radius:0!important;display:flex;flex-direction:column}
-.modal-card .quick-entry label{display:none!important}
-.modal-card textarea{width:100%;min-height:115px;max-height:30dvh;flex:none;resize:vertical;font-size:16px!important;padding:12px!important;border:1px solid #cbd5e1!important;border-radius:10px!important}
-.modal-card .quick-entry>div{gap:8px!important;margin-top:10px!important}
-.modal-card .quick-entry button{min-height:42px;font-size:15px;padding:9px 14px}.modal-card #clearQuickProducts{display:none!important}
-#quickMessage{display:none!important}
-@media(min-width:700px){.modal-overlay{align-items:center;justify-content:center;padding:24px}.modal-card{width:min(440px,100%);max-height:80dvh;border-radius:18px;padding:20px;box-shadow:0 24px 70px #0004}.modal-header{top:-20px}}
-
-.settings-modal{position:fixed!important;inset:0!important;z-index:100000!important;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.48)}
-.settings-modal.is-open{display:flex!important}
-.settings-card{position:relative;width:min(92vw,390px);max-width:390px;min-width:0;max-height:80dvh;overflow-y:auto;background:#fff!important;color:#111827;border:1px solid #e2e8f0;border-radius:14px;padding:14px;box-shadow:0 18px 55px #0004}
-.settings-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px}
-.settings-head h2{margin:0;font-size:20px;line-height:1.25}
-.settings-card label{display:block;font-weight:700;margin-bottom:7px}
-.settings-card input{display:block;width:100%;min-width:0;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:16px Arial;margin:0 0 12px;background:#fff;color:#111827}
-.settings-actions{display:flex;gap:8px;flex-wrap:wrap}
-.settings-actions button{min-height:42px}
-.settings-help{color:#64748b;font-size:13px;line-height:1.4;margin:0 0 12px}
-@media(min-width:700px){.settings-card{width:min(440px,100%);max-width:440px;border-radius:18px;padding:20px}}
-.toolbar{max-width:900px;margin:18px auto 10px;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.toolbar strong{font-size:18px}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-button{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer;background:#111827;color:white}
-button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-main-link{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:38px;padding:6px 12px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:#111827;text-decoration:none;font-size:24px;font-weight:700;line-height:1}
-.note{max-width:900px;margin:0 auto 12px;padding:0 14px;color:#475569;font-size:13px}
-.receipt{width:min(100% - 20px,720px);margin:0 auto 30px;padding:28px 24px 25px;background:var(--paper);box-shadow:0 4px 24px #0f172a14}
-.store-name{font-family:Impact,"Arial Narrow",sans-serif;font-weight:900;font-size:clamp(36px,7.1vw,66px);letter-spacing:-1.1px;line-height:1.05;text-align:center;text-transform:uppercase;margin:0 0 17px;white-space:nowrap}
-.dash{border:0;border-top:4px dashed var(--ink);margin:14px 0}
-.bill-info,.items-table,.summary,.thank-you,.footer-slogan{font-family:"Roboto Condensed","Arial Narrow",Impact,sans-serif;font-weight:800}
-.bill-info{font-size:clamp(18px,4.1vw,31px);line-height:1.34}
-.info-row{display:grid;grid-template-columns:135px 1fr;gap:8px}
-.time-cashier{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.items-wrap{width:100%;overflow-x:auto}
-.items-table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:clamp(15px,3.45vw,27px)}
-.items-table th,.items-table td{padding:8px 2px;text-align:left;vertical-align:top}
-.items-table th{font-size:clamp(15px,3.5vw,28px);white-space:nowrap}
-.items-table .num{width:8%}.items-table .item{width:29%;white-space:normal;overflow-wrap:anywhere}.items-table .qty{width:11%;text-align:center}.items-table .rate{width:22%;text-align:right;white-space:nowrap}.items-table .amount{width:30%;text-align:right;white-space:nowrap}
-.items-table input{font:inherit;font-weight:800;color:#000;border:0;border-bottom:0;border-radius:0;background:transparent;width:100%;min-width:0;padding:0;outline-offset:2px}
-.items-table input[type=number]{text-align:right}
-.items-table .qty input{text-align:center}
-.items-table .rate input{text-align:right}
-.summary{font-size:clamp(19px,4.2vw,31px);line-height:1.4}
-.summary-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.total-items{margin-top:3px}
-.grand-total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-family:Impact,"Arial Narrow",sans-serif;font-weight:900;font-size:clamp(28px,6.5vw,49px);letter-spacing:-.6px;line-height:1.12;margin:8px 0;white-space:nowrap}
-.thank-you{text-align:center;font-size:clamp(25px,5vw,38px);line-height:1.4;letter-spacing:1px;margin:17px 0}
-.footer-slogan{text-align:center;font-size:clamp(16px,3.8vw,29px);line-height:1.35;white-space:normal}
-.smallprint{text-align:center;font:12px Arial,sans-serif;margin-top:12px;color:#333}
-@media(max-width:430px){.receipt{padding:20px 10px}.info-row{grid-template-columns:100px 1fr}.dash{border-top-width:3px;margin:11px 0}.items-table th,.items-table td{padding:7px 1px}.grand-total{letter-spacing:-1px}}
+/* Inline quick/bulk entry: no popup overlay. Only the text field is resizable. */
+#quickEntryModal{display:block!important;position:static!important;inset:auto!important;z-index:auto!important;padding:0!important;margin:12px auto!important;width:min(100% - 24px,720px)!important;max-width:720px!important;background:transparent!important}
+#quickEntryModal .quick-entry{display:flex!important;flex-direction:column;width:100%!important;max-width:none!important;margin:0!important;padding:12px!important;background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 2px 12px #0f172a10!important;border-radius:10px!important;gap:8px}
+#quickEntryModal textarea{display:block!important;position:static!important;width:100%!important;min-width:0!important;min-height:90px;max-height:none;resize:vertical;font-size:16px!important;padding:12px!important;border:1px solid #cbd5e1!important;border-radius:10px!important}
+#quickEntryModal .quick-entry label{display:block!important;font-weight:700;margin-bottom:4px}
+#quickEntryModal .quick-entry>div{gap:8px!important;margin-top:8px!important}
+#quickEntryModal .quick-entry button{min-height:42px;font-size:15px;padding:9px 14px}
+#quickMessage{display:block!important;font-size:13px;margin-top:7px;color:#475569}
 @media print{
  @page{size:80mm auto;margin:3mm}
  body{background:white}
@@ -118,7 +64,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-m
   </div>
 </div>
 <p class="note">Quick entry: type <b>American 5 108</b> and press Enter. You can paste multiple products, one per line. Amounts and totals update automatically.</p>
-<div id="quickEntryModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle"><div class="modal-card"><div class="modal-header"><div id="quickModalTitle" class="modal-title">➕ Quick / Bulk Product Entry</div><button type="button" id="closeQuickModal" class="modal-close" aria-label="Close popup" title="Close">×</button></div><p class="modal-help">Enter one product or several products. Example: <b>chams 5 90 kings 219 5 american 7 120</b>. Tap “Add to bill” when ready.</p><div class="quick-entry" style="max-width:720px;width:calc(100% - 20px);margin:0 auto 12px;padding:12px;background:#fff;box-shadow:0 2px 12px #0f172a10;border-radius:10px">
+<div id="quickEntryModal" class="quick-entry-inline"><div class="quick-entry" style="max-width:720px;width:100%;margin:0 auto 12px;padding:12px;background:#fff;box-shadow:0 2px 12px #0f172a10;border-radius:10px">
   <label for="quickProducts" style="display:block;font-weight:700;margin-bottom:7px">Products and quantity / rate</label>
   <textarea id="quickProducts" rows="2" placeholder="chams 5 90 kings 219 5 american 7 120" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:16px Arial;resize:vertical"></textarea>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
@@ -242,12 +188,9 @@ function calculate(){
 }
 function reset(){ $("itemRows").innerHTML="";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
 function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
-function openQuickModal(){closeSettings();const modal=$("quickEntryModal");modal.style.display="flex";modal.classList.add("is-open");document.body.style.overflow="hidden";setTimeout(()=>$("quickProducts").focus(),120)}
-function closeQuickModal(){const modal=$("quickEntryModal");modal.classList.remove("is-open");modal.style.display="none";document.body.style.overflow=""}
+function openQuickModal(){closeSettings();$("quickProducts").scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>$("quickProducts").focus(),250)}
+function closeQuickModal(){}
 $("addItem").addEventListener("click",openQuickModal);
-$("closeQuickModal").addEventListener("click",closeQuickModal);
-$("quickEntryModal").addEventListener("click",event=>{if(event.target===$("quickEntryModal"))closeQuickModal()});
-document.addEventListener("keydown",event=>{if(event.key==="Escape" && $("quickEntryModal").classList.contains("is-open"))closeQuickModal()});
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
