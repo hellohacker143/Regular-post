@@ -177,7 +177,7 @@ $("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.v
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
-$("toggleBillView").addEventListener("click",()=>{window.location.href="https://hellohacker143.github.io/Regular-post/";});
+$("toggleBillView").addEventListener("click",()=>{const only=document.body.classList.toggle("bill-only");$("toggleBillView").textContent=only?"↩️":"👁️";$("toggleBillView").title=only?"Return to full billing page":"Show bill only";$("toggleBillView").setAttribute("aria-label",$("toggleBillView").title);window.scrollTo({top:0,behavior:"smooth"});});
 
 function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
