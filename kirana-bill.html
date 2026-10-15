@@ -73,12 +73,12 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
 <p class="note">Quick entry: type <b>American 5 108</b> and press Enter. You can paste multiple products, one per line. Amounts and totals update automatically.</p>
 <div class="quick-entry" style="max-width:720px;width:calc(100% - 20px);margin:0 auto 12px;padding:12px;background:#fff;box-shadow:0 2px 12px #0f172a10;border-radius:10px">
   <label for="quickProducts" style="display:block;font-weight:700;margin-bottom:7px">Quick / Bulk Product Entry</label>
-  <textarea id="quickProducts" rows="2" placeholder="American 5 108&#10;Chams 5 90" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:16px Arial;resize:vertical"></textarea>
+  <textarea id="quickProducts" rows="2" placeholder="chams 5 90 kings 219 5 american 7 120" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:16px Arial;resize:vertical"></textarea>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
     <button type="button" id="addQuickProducts">Add to bill</button>
     <button type="button" class="secondary" id="clearQuickProducts">Clear text</button>
   </div>
-  <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Format: Product name, quantity, rate — for example, American 5 108.</div>
+  <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Enter products continuously: chams 5 90 kings 219 5 american 7 120. Either quantity-rate or rate-quantity order is accepted.</div>
 </div>
 <section class="receipt" id="receipt">
   <h1 class="store-name">SAI KIRANA STORE</h1>
@@ -130,24 +130,34 @@ function addRow(item={name:"",qty:1,rate:0}){
 }
 function addQuickProducts(){
  const box=$("quickProducts"), message=$("quickMessage");
- const lines=box.value.split(/\\r?\\n/).map(s=>s.trim()).filter(Boolean);
- if(!lines.length){message.textContent="Type a product like American 5 108 first.";return}
+ const input=box.value.trim();
+ if(!input){message.textContent="Type products, e.g. chams 5 90 kings 219 5 american 7 120";return}
+ const tokens=input.split(/\\s+/);
  const parsed=[], errors=[];
- lines.forEach((line,index)=>{
-   // The final two values must be quantity and rate; product names can contain spaces.
-   const match=line.match(/^(.+?)\\s+([0-9]+(?:\\.[0-9]+)?)\\s+([0-9]+(?:\\.[0-9]+)?)\\s*$/);
-   if(!match){errors.push(index+1);return}
-   const name=match[1].trim(), qty=Number(match[2]), rate=Number(match[3]);
-   if(!name || qty<0 || rate<0){errors.push(index+1);return}
-   parsed.push({name,qty,rate});
- });
+ let nameParts=[], i=0;
+ while(i<tokens.length){
+   if(/^\\d+(?:\\.\\d+)?$/.test(tokens[i])){
+     if(!nameParts.length || i+1>=tokens.length || !/^\\d+(?:\\.\\d+)?$/.test(tokens[i+1])){
+       errors.push(tokens[i]); i++; continue;
+     }
+     const a=Number(tokens[i]), b=Number(tokens[i+1]);
+     // Accept either Quantity Rate (5 90) or Rate Quantity (219 5).
+     // For normal shop bills, the smaller number is treated as quantity.
+     const qty=Math.min(a,b), rate=Math.max(a,b);
+     parsed.push({name:nameParts.join(" "),qty,rate});
+     nameParts=[]; i+=2;
+   }else{
+     nameParts.push(tokens[i]); i++;
+   }
+ }
+ if(nameParts.length) errors.push(nameParts.join(" "));
  parsed.forEach(item=>addRow(item));
  if(parsed.length){
    box.value="";
-   message.textContent=parsed.length+" product(s) added to the bill."+(errors.length?" Could not read line(s): "+errors.join(", ")+". Use Product Name Quantity Rate.":"");
+   message.textContent=parsed.length+" product(s) added. Amounts and grand total calculated automatically."+(errors.length?" Please check unread text: "+errors.join(", "):"");
    calculate();
  }else{
-   message.textContent="Could not read the entry. Use Product Name Quantity Rate, e.g. American 5 108.";
+   message.textContent="Could not read products. Example: chams 5 90 kings 219 5 american 7 120";
  }
 }
 $("addQuickProducts").addEventListener("click",addQuickProducts);
