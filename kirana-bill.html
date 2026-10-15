@@ -10,6 +10,19 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
 body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body.bill-only .quick-entry{display:none!important}body.bill-only .receipt{width:min(100% - 12px,720px);margin:8px auto;padding:20px 12px;box-shadow:none}body.bill-only #toggleBillView{display:block!important;position:fixed;top:8px;right:8px;z-index:1000;border-radius:50%;width:42px;height:42px;padding:0;font-size:20px;box-shadow:0 2px 8px #0002}
+
+/* Quick / bulk entry popup */
+.modal-overlay{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.58)}
+.modal-overlay.is-open{display:flex}
+.modal-card{width:min(100%,620px);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 24px 70px #0004}
+.modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.modal-title{font-size:20px;font-weight:800}
+.modal-close{flex:0 0 42px;width:42px;height:42px;padding:0;border-radius:50%;font-size:26px;line-height:1;background:#f1f5f9;color:#111827;border:1px solid #cbd5e1}
+.modal-help{font-size:14px;color:#475569;line-height:1.45;margin:0 0 12px}
+.modal-card .quick-entry{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important;border-radius:0!important}
+.modal-card textarea{min-height:130px}
+@media(max-width:480px){.modal-card{padding:15px;border-radius:15px}.modal-title{font-size:18px}}
+
 .toolbar{max-width:900px;margin:18px auto 10px;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .toolbar strong{font-size:18px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -74,15 +87,15 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-m
   </div>
 </div>
 <p class="note">Quick entry: type <b>American 5 108</b> and press Enter. You can paste multiple products, one per line. Amounts and totals update automatically.</p>
-<div class="quick-entry" style="max-width:720px;width:calc(100% - 20px);margin:0 auto 12px;padding:12px;background:#fff;box-shadow:0 2px 12px #0f172a10;border-radius:10px">
-  <label for="quickProducts" style="display:block;font-weight:700;margin-bottom:7px">Quick / Bulk Product Entry</label>
+<div id="quickEntryModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle"><div class="modal-card"><div class="modal-header"><div id="quickModalTitle" class="modal-title">➕ Quick / Bulk Product Entry</div><button type="button" id="closeQuickModal" class="modal-close" aria-label="Close popup" title="Close">×</button></div><p class="modal-help">Enter one product or several products. Example: <b>chams 5 90 kings 219 5 american 7 120</b>. Tap “Add to bill” when ready.</p><div class="quick-entry" style="max-width:720px;width:calc(100% - 20px);margin:0 auto 12px;padding:12px;background:#fff;box-shadow:0 2px 12px #0f172a10;border-radius:10px">
+  <label for="quickProducts" style="display:block;font-weight:700;margin-bottom:7px">Products and quantity / rate</label>
   <textarea id="quickProducts" rows="2" placeholder="chams 5 90 kings 219 5 american 7 120" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:16px Arial;resize:vertical"></textarea>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
     <button type="button" id="addQuickProducts">Add to bill</button>
     <button type="button" class="secondary" id="clearQuickProducts">Clear text</button>
   </div>
   <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Enter products continuously: chams 5 90 kings 219 5 american 7 120. Either quantity-rate or rate-quantity order is accepted.</div>
-</div>
+</div></div></div>
 <section class="receipt" id="receipt">
   <h1 class="store-name">SAI KIRANA STORE</h1>
   <hr class="dash">
@@ -147,6 +160,7 @@ function addQuickProducts(){
    box.value="";
    message.textContent=parsed.length+" product(s) added. Amounts and grand total calculated automatically."+(errors.length?" Please check unread text: "+errors.join(", "):"");
    calculate();
+   closeQuickModal();
  }else{
    message.textContent="Could not read products. Example: chams 5 90 kings 219 5 american 7 120";
  }
@@ -172,7 +186,12 @@ function calculate(){
 }
 function reset(){ $("itemRows").innerHTML="";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
 function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
-$("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.value.trim()){addQuickProducts();if(!box.value.trim()){box.focus();return}}else{box.focus();$("quickMessage").textContent="Type one or more products in Quick / Bulk Product Entry above, then tap + Add item / Bulk again."}});
+function openQuickModal(){const modal=$("quickEntryModal");modal.classList.add("is-open");document.body.style.overflow="hidden";setTimeout(()=>$("quickProducts").focus(),80)}
+function closeQuickModal(){const modal=$("quickEntryModal");modal.classList.remove("is-open");document.body.style.overflow=""}
+$("addItem").addEventListener("click",openQuickModal);
+$("closeQuickModal").addEventListener("click",closeQuickModal);
+$("quickEntryModal").addEventListener("click",event=>{if(event.target===$("quickEntryModal"))closeQuickModal()});
+document.addEventListener("keydown",event=>{if(event.key==="Escape" && $("quickEntryModal").classList.contains("is-open"))closeQuickModal()});
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
