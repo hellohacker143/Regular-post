@@ -32,15 +32,17 @@ body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body
 #quickMessage{display:none!important}
 @media(min-width:700px){.modal-overlay{align-items:center;justify-content:center;padding:24px}.modal-card{width:min(440px,100%);max-height:80dvh;border-radius:18px;padding:20px;box-shadow:0 24px 70px #0004}.modal-header{top:-20px}}
 
-.settings-modal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;background:#0f172a99}
-.settings-modal.is-open{display:flex}
-.settings-card{width:min(100%,420px);background:#fff;border-radius:16px;padding:20px;box-shadow:0 20px 60px #0004}
-.settings-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
-.settings-head h2{margin:0;font-size:22px}
-.settings-card label{display:block;font-weight:700;margin-bottom:8px}
-.settings-card input{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font:17px Arial;margin-bottom:14px}
-.settings-actions{display:flex;gap:10px;flex-wrap:wrap}
-.settings-help{color:#64748b;font-size:13px;line-height:1.4;margin:0 0 14px}
+.settings-modal{position:fixed!important;inset:0!important;z-index:100000!important;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.48)}
+.settings-modal.is-open{display:flex!important}
+.settings-card{position:relative;width:min(92vw,390px);max-width:390px;min-width:0;max-height:80dvh;overflow-y:auto;background:#fff!important;color:#111827;border:1px solid #e2e8f0;border-radius:14px;padding:14px;box-shadow:0 18px 55px #0004}
+.settings-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px}
+.settings-head h2{margin:0;font-size:20px;line-height:1.25}
+.settings-card label{display:block;font-weight:700;margin-bottom:7px}
+.settings-card input{display:block;width:100%;min-width:0;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:16px Arial;margin:0 0 12px;background:#fff;color:#111827}
+.settings-actions{display:flex;gap:8px;flex-wrap:wrap}
+.settings-actions button{min-height:42px}
+.settings-help{color:#64748b;font-size:13px;line-height:1.4;margin:0 0 12px}
+@media(min-width:700px){.settings-card{width:min(440px,100%);max-width:440px;border-radius:18px;padding:20px}}
 .toolbar{max-width:900px;margin:18px auto 10px;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .toolbar strong{font-size:18px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -159,8 +161,8 @@ function applyShopName(name){
  document.title=clean+" — Receipt";
  document.querySelector('meta[name="description"]')?.setAttribute("content","Printable "+clean+" receipt with editable items and automatic totals.");
 }
-function openSettings(){$("shopNameInput").value=getShopName();$("settingsMessage").textContent="";$("settingsModal").classList.add("is-open");document.body.style.overflow="hidden";setTimeout(()=>$("shopNameInput").focus(),80)}
-function closeSettings(){$("settingsModal").classList.remove("is-open");document.body.style.overflow=""}
+function openSettings(){closeQuickModal();$("shopNameInput").value=getShopName();$("settingsMessage").textContent="";const modal=$("settingsModal");modal.style.display="flex";modal.classList.add("is-open");document.body.style.overflow="hidden";setTimeout(()=>$("shopNameInput").focus(),100)}
+function closeSettings(){const modal=$("settingsModal");modal.classList.remove("is-open");modal.style.display="none";document.body.style.overflow=""}
 $("settingsButton").addEventListener("click",openSettings);
 $("closeSettings").addEventListener("click",closeSettings);
 $("cancelSettings").addEventListener("click",closeSettings);
