@@ -15,17 +15,17 @@ body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body
 /* Full-screen quick-entry popup matching the mobile screen reference */
 .modal-overlay{position:fixed;inset:0;z-index:4000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.48)}
 .modal-overlay.is-open{display:flex}
-.modal-card{position:relative;width:min(100%,440px);max-height:min(78dvh,620px);overflow-y:auto;background:#fff;border-radius:18px;padding:16px;box-shadow:0 18px 55px #0004;display:flex;flex-direction:column}
-.modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;position:sticky;top:-16px;padding:6px 0 8px;background:#fff;z-index:2}
-.modal-title{font-size:clamp(18px,4.5vw,22px);font-weight:800;line-height:1.25}
+.modal-card{position:relative;width:min(92vw,390px);max-height:70dvh;overflow-y:auto;background:#fff;border-radius:14px;padding:12px;box-shadow:0 18px 55px #0004;display:flex;flex-direction:column;gap:8px}
+.modal-header{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0;padding:0;background:#fff;z-index:2}
+.modal-title{display:none}
 .modal-close{flex:0 0 40px;width:40px;height:40px;padding:0;border-radius:50%;font-size:25px;line-height:1;background:#f1f5f9;color:#111827;border:1px solid #cbd5e1}
-.modal-help{font-size:14px;color:#475569;line-height:1.4;margin:0 0 14px}
+.modal-help{display:none}
 .modal-card .quick-entry{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important;border-radius:0!important;display:flex;flex-direction:column}
-.modal-card .quick-entry label{font-size:16px!important;margin-bottom:8px!important}
-.modal-card textarea{width:100%;min-height:130px;max-height:32dvh;flex:none;resize:vertical;font-size:16px!important;padding:12px!important;border:1px solid #cbd5e1!important;border-radius:10px!important}
+.modal-card .quick-entry label{display:none!important}
+.modal-card textarea{width:100%;min-height:115px;max-height:30dvh;flex:none;resize:vertical;font-size:16px!important;padding:12px!important;border:1px solid #cbd5e1!important;border-radius:10px!important}
 .modal-card .quick-entry>div{gap:8px!important;margin-top:10px!important}
-.modal-card .quick-entry button{min-height:44px;font-size:15px;padding:10px 14px}
-#quickMessage{font-size:13px!important;line-height:1.4;margin-top:10px!important}
+.modal-card .quick-entry button{min-height:42px;font-size:15px;padding:9px 14px}.modal-card #clearQuickProducts{display:none!important}
+#quickMessage{display:none!important}
 @media(min-width:700px){.modal-overlay{align-items:center;justify-content:center;padding:24px}.modal-card{width:min(440px,100%);max-height:80dvh;border-radius:18px;padding:20px;box-shadow:0 24px 70px #0004}.modal-header{top:-20px}}
 
 .settings-modal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;background:#0f172a99}
@@ -116,7 +116,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-m
   <label for="quickProducts" style="display:block;font-weight:700;margin-bottom:7px">Products and quantity / rate</label>
   <textarea id="quickProducts" rows="2" placeholder="chams 5 90 kings 219 5 american 7 120" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:16px Arial;resize:vertical"></textarea>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-    <button type="button" id="addQuickProducts">Add to bill</button>
+    <button type="button" id="addQuickProducts">Add items</button>
     <button type="button" class="secondary" id="clearQuickProducts">Clear text</button>
   </div>
   <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Enter products continuously: chams 5 90 kings 219 5 american 7 120. Either quantity-rate or rate-quantity order is accepted.</div>
