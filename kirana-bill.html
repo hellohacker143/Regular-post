@@ -141,6 +141,9 @@ function openBillInNewTab(){
  const tab=window.open("","_blank");
  if(!tab){alert("Please allow pop-ups for this page, then try again.");return}
  const clone=$("receipt").cloneNode(true);
+ // In the clean bill preview, hide bill number, date, time, and cashier details.
+ const info=clone.querySelector(".bill-info");
+ if(info) info.remove();
  clone.querySelectorAll("input").forEach(input=>{
    const span=document.createElement("span");
    span.textContent=input.value;
