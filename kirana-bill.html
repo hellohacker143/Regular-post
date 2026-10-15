@@ -13,20 +13,20 @@ body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body
 
 /* Quick / bulk entry popup */
 /* Full-screen quick-entry popup matching the mobile screen reference */
-.modal-overlay{position:fixed;inset:0;z-index:2000;display:none;align-items:stretch;justify-content:stretch;padding:0;background:rgba(15,23,42,.58)}
+.modal-overlay{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.48)}
 .modal-overlay.is-open{display:flex}
-.modal-card{position:relative;width:100%;height:100%;height:100dvh;max-height:100dvh;overflow-y:auto;background:#fff;border-radius:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));box-shadow:none;display:flex;flex-direction:column}
-.modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;position:sticky;top:-22px;padding:14px 0 10px;background:#fff;z-index:2}
-.modal-title{font-size:clamp(20px,5vw,26px);font-weight:800;line-height:1.25}
-.modal-close{flex:0 0 48px;width:48px;height:48px;padding:0;border-radius:50%;font-size:30px;line-height:1;background:#f1f5f9;color:#111827;border:1px solid #cbd5e1}
-.modal-help{font-size:clamp(15px,4vw,18px);color:#475569;line-height:1.5;margin:0 0 22px}
-.modal-card .quick-entry{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important;border-radius:0!important;display:flex;flex-direction:column;flex:1}
-.modal-card .quick-entry label{font-size:18px!important;margin-bottom:10px!important}
-.modal-card textarea{width:100%;min-height:220px;flex:1;resize:vertical;font-size:18px!important;padding:14px!important;border:2px solid #cbd5e1!important;border-radius:12px!important}
-.modal-card .quick-entry>div{gap:10px!important;margin-top:14px!important}
-.modal-card .quick-entry button{min-height:52px;font-size:17px;padding:12px 18px}
-#quickMessage{font-size:15px!important;line-height:1.45;margin-top:14px!important}
-@media(min-width:700px){.modal-overlay{align-items:center;justify-content:center;padding:24px}.modal-card{width:min(760px,100%);height:min(900px,calc(100dvh - 48px));max-height:calc(100dvh - 48px);border-radius:18px;padding:24px;box-shadow:0 24px 70px #0004}.modal-header{top:-24px}}
+.modal-card{position:relative;width:min(100%,440px);max-height:min(78dvh,620px);overflow-y:auto;background:#fff;border-radius:18px;padding:16px;box-shadow:0 18px 55px #0004;display:flex;flex-direction:column}
+.modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;position:sticky;top:-16px;padding:6px 0 8px;background:#fff;z-index:2}
+.modal-title{font-size:clamp(18px,4.5vw,22px);font-weight:800;line-height:1.25}
+.modal-close{flex:0 0 40px;width:40px;height:40px;padding:0;border-radius:50%;font-size:25px;line-height:1;background:#f1f5f9;color:#111827;border:1px solid #cbd5e1}
+.modal-help{font-size:14px;color:#475569;line-height:1.4;margin:0 0 14px}
+.modal-card .quick-entry{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important;border-radius:0!important;display:flex;flex-direction:column}
+.modal-card .quick-entry label{font-size:16px!important;margin-bottom:8px!important}
+.modal-card textarea{width:100%;min-height:130px;max-height:32dvh;flex:none;resize:vertical;font-size:16px!important;padding:12px!important;border:1px solid #cbd5e1!important;border-radius:10px!important}
+.modal-card .quick-entry>div{gap:8px!important;margin-top:10px!important}
+.modal-card .quick-entry button{min-height:44px;font-size:15px;padding:10px 14px}
+#quickMessage{font-size:13px!important;line-height:1.4;margin-top:10px!important}
+@media(min-width:700px){.modal-overlay{align-items:center;justify-content:center;padding:24px}.modal-card{width:min(440px,100%);max-height:80dvh;border-radius:18px;padding:20px;box-shadow:0 24px 70px #0004}.modal-header{top:-20px}}
 
 .settings-modal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:16px;background:#0f172a99}
 .settings-modal.is-open{display:flex}
