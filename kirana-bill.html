@@ -9,6 +9,7 @@
 :root{--ink:#000;--paper:#fff;--page:#eef1f5}
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body.bill-only .quick-entry{display:none!important}body.bill-only .receipt{width:min(100% - 12px,720px);margin:8px auto;padding:20px 12px;box-shadow:none}
 .toolbar{max-width:900px;margin:18px auto 10px;padding:0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .toolbar strong{font-size:18px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -67,6 +68,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
     <button class="secondary" type="button" id="addItem">+ Add item / Bulk</button>
     <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
     <button class="secondary" type="button" id="resetBill">New empty bill</button>
+    <button class="secondary" type="button" id="toggleBillView">Show bill only</button>
     <button class="secondary" type="button" id="openBill">Open bill in new tab</button>
     <button type="button" id="printBill">Print receipt</button>
   </div>
@@ -85,8 +87,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
   <h1 class="store-name">SAI KIRANA STORE</h1>
   <hr class="dash">
   <div class="bill-info">
-    <div class="info-row"><span>BILL NO:</span><input aria-label="Bill number" id="billNo" value="00123"></div>
-    <div class="info-row"><span>DATE :</span><input aria-label="Bill date" id="billDate" value=""></div>
+    <div class="info-row"><span>DATE :</span><input aria-label="Bill date" id="billDate" value="">
     <div class="time-cashier"><span>TIME : <input aria-label="Bill time" id="billTime" value="" style="width:105px;font:inherit;font-weight:inherit;border:0;background:transparent"></span><span>CASHIER: <input aria-label="Cashier number" id="cashier" value="01" style="width:35px;font:inherit;font-weight:inherit;border:0;background:transparent"></span></div>
   </div>
   <hr class="dash">
@@ -174,12 +175,13 @@ function calculate(){
  $("totalQty").textContent=qtyTotal.toLocaleString("en-IN");
  $("grandTotal").textContent=money(subtotal-discount);
 }
-function reset(){ $("itemRows").innerHTML="";$("billNo").value="";$("billDate").value=today();$("billTime").value=nowTime();$("cashier").value="01";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
+function reset(){ $("itemRows").innerHTML="";$("billDate").value=today();$("billTime").value=nowTime();$("cashier").value="01";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
 function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
 $("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.value.trim()){addQuickProducts();if(!box.value.trim()){box.focus();return}}else{box.focus();$("quickMessage").textContent="Type one or more products in Quick / Bulk Product Entry above, then tap + Add item / Bulk again."}});
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
+$("toggleBillView").addEventListener("click",()=>{const only=document.body.classList.toggle("bill-only");$("toggleBillView").textContent=only?"Show full website":"Show bill only";window.scrollTo({top:0,behavior:"smooth"});});
 function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
  if(!tab){alert("Please allow pop-ups for this page, then try again.");return}
