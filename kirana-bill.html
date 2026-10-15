@@ -156,6 +156,10 @@ $("clearQuickProducts").addEventListener("click",()=>{$("quickProducts").value="
 $("quickProducts").addEventListener("keydown",event=>{
  if(event.key==="Enter" && !event.shiftKey){event.preventDefault();addQuickProducts()}
 });
+function updateVisibleRows(){
+ const rows=[...$("itemRows").rows];
+ rows.forEach((tr,i)=>{tr.style.display=(document.body.classList.contains("bill-only") && i>=5)?"none":"";});
+}
 function calculate(){
  let subtotal=0,qtyTotal=0;
  [...$("itemRows").rows].forEach((tr,i)=>{
@@ -169,6 +173,7 @@ function calculate(){
  $("subtotal").textContent=money(subtotal);
  $("totalQty").textContent=qtyTotal.toLocaleString("en-IN");
  $("grandTotal").textContent=money(subtotal-discount);
+ updateVisibleRows();
 }
 function reset(){ $("itemRows").innerHTML="";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
 function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
@@ -176,7 +181,7 @@ $("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.v
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
-$("toggleBillView").addEventListener("click",()=>{const only=document.body.classList.toggle("bill-only");$("toggleBillView").textContent=only?"↩️":"👁️";$("toggleBillView").title=only?"Show full website":"Show bill only";$("toggleBillView").setAttribute("aria-label",$("toggleBillView").title);window.scrollTo({top:0,behavior:"smooth"});});
+$("toggleBillView").addEventListener("click",()=>{const only=document.body.classList.toggle("bill-only");$("toggleBillView").textContent=only?"↩️":"👁️";updateVisibleRows();$("toggleBillView").title=only?"Show full website":"Show bill only";$("toggleBillView").setAttribute("aria-label",$("toggleBillView").title);window.scrollTo({top:0,behavior:"smooth"});});
 function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
  if(!tab){alert("Please allow pop-ups for this page, then try again.");return}
