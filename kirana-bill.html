@@ -68,6 +68,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-m
     <button class="secondary" type="button" id="addItem">+ Add item / Bulk</button>
     <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
     <button class="secondary" type="button" id="resetBill">New empty bill</button>
+    <button class="secondary" type="button" id="toggleBillView" aria-label="Show bill only" title="Show bill only">👁️</button>
     <button class="secondary" type="button" id="openBill">Open bill in new tab</button>
     <button type="button" id="printBill">Print receipt</button>
   </div>
@@ -175,6 +176,8 @@ $("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.v
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
+
+$("toggleBillView").addEventListener("click",()=>{const only=document.body.classList.toggle("bill-only");$("toggleBillView").textContent=only?"↩️":"👁️";$("toggleBillView").title=only?"Return to full billing page":"Show bill only";$("toggleBillView").setAttribute("aria-label",$("toggleBillView").title);window.scrollTo({top:0,behavior:"smooth"});});
 
 function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
