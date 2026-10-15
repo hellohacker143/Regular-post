@@ -43,7 +43,7 @@ function parseSpeech(text){
  if(!p){$("capturedMath").textContent='Product not found. Add "'+name+'" in Manage Products or use Quick Add.';$("voiceStatus").textContent='Heard "'+raw+'", but could not match a saved product.';return}
  if(!Number.isFinite(qty)||qty<1||!Number.isFinite(customRate?rate:Number(p.rate))){$("voiceStatus").textContent="Please say a valid quantity and rate.";return}
  const usedRate=customRate?rate:Number(p.rate);const label=p.name+(p.variant?" - "+p.variant:"");
- if(customRate)cart.push({productId:p.id,name:label,qty:qty,rate:usedRate});else add(p,qty);
+ if(customRate){cart.push({productId:p.id,name:label,qty:qty,rate:usedRate});}else{const existing=cart.find(x=>x.productId===p.id&&x.rate===usedRate&&x.name===label);if(existing)existing.qty=qty;else cart.push({productId:p.id,name:label,rate:usedRate,qty:qty});}
  renderCart();
  $("capturedMath").textContent=label+" | "+money(usedRate)+" × "+qty+" = "+money(usedRate*qty);
  $("voiceStatus").textContent="Added "+label+": "+money(usedRate)+" × "+qty+" = "+money(usedRate*qty)+". Bill total updated.";
