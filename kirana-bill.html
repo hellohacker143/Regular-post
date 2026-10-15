@@ -64,7 +64,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
 <div class="toolbar">
   <strong>🧾 SAI KIRANA STORE — Bill Preview</strong>
   <div class="actions">
-    <button class="secondary" type="button" id="addItem">+ Add item</button>
+    <button class="secondary" type="button" id="addItem">+ Add item / Bulk</button>
     <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
     <button class="secondary" type="button" id="resetBill">New empty bill</button>
     <button class="secondary" type="button" id="openBill">Open bill in new tab</button>
@@ -176,7 +176,7 @@ function calculate(){
 }
 function reset(){ $("itemRows").innerHTML="";$("billNo").value="";$("billDate").value=today();$("billTime").value=nowTime();$("cashier").value="01";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
 function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
-$("addItem").addEventListener("click",()=>{addRow();const rows=$("itemRows").querySelectorAll(".product");rows[rows.length-1].focus()});
+$("addItem").addEventListener("click",()=>{const box=$("quickProducts");if(box.value.trim()){addQuickProducts();if(!box.value.trim()){box.focus();return}}else{box.focus();$("quickMessage").textContent="Type one or more products in Quick / Bulk Product Entry above, then tap + Add item / Bulk again."}});
 $("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
