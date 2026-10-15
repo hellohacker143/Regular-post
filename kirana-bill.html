@@ -127,12 +127,12 @@ function addQuickProducts(){
  const box=$("quickProducts"), message=$("quickMessage");
  const input=box.value.trim();
  if(!input){message.textContent="Type products, e.g. chams 5 90 kings 219 5 american 7 120";return}
- const tokens=input.split(/\\s+/);
+ const tokens=input.replace(/,/g," ").split(/\s+/);
  const parsed=[], errors=[];
  let nameParts=[], i=0;
  while(i<tokens.length){
-   if(/^\\d+(?:\\.\\d+)?$/.test(tokens[i])){
-     if(!nameParts.length || i+1>=tokens.length || !/^\\d+(?:\\.\\d+)?$/.test(tokens[i+1])){
+   if(/^\d+(?:\.\d+)?$/.test(tokens[i])){
+     if(!nameParts.length || i+1>=tokens.length || !/^\d+(?:\.\d+)?$/.test(tokens[i+1])){
        errors.push(tokens[i]); i++; continue;
      }
      const a=Number(tokens[i]), b=Number(tokens[i+1]);
