@@ -156,10 +156,6 @@ $("clearQuickProducts").addEventListener("click",()=>{$("quickProducts").value="
 $("quickProducts").addEventListener("keydown",event=>{
  if(event.key==="Enter" && !event.shiftKey){event.preventDefault();addQuickProducts()}
 });
-function updateVisibleRows(){
- const rows=[...$("itemRows").rows];
- rows.forEach((tr,i)=>{tr.style.display=(document.body.classList.contains("bill-only") && i>=5)?"none":"";});
-}
 function calculate(){
  let subtotal=0,qtyTotal=0;
  [...$("itemRows").rows].forEach((tr,i)=>{
@@ -173,7 +169,6 @@ function calculate(){
  $("subtotal").textContent=money(subtotal);
  $("totalQty").textContent=qtyTotal.toLocaleString("en-IN");
  $("grandTotal").textContent=money(subtotal-discount);
- updateVisibleRows();
 }
 function reset(){ $("itemRows").innerHTML="";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
 function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
