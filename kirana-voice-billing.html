@@ -28,11 +28,16 @@ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition
 function parseSpeech(text){
  const raw=text.trim();let s=raw.toLowerCase().replace(/[₹,]/g," ").replace(/\s+/g," ").trim();
  $("liveCapture").style.display="block";$("capturedText").textContent=raw;
- // Supports product + spoken rate x quantity, e.g. Kings 129 times 45.
- const math=s.match(/^(.*?)\s+(\d+(?:\.\d+)?)\s*(?:x|×|\\*|times|multiply|multiplied by|into|by)\s*(\d+)$/);
+ // Format A: product + spoken rate × quantity. Format B: product + quantity using saved product rate.
+ const math=s.match(/^(.*?)\s+(\d+(?:\.\d+)?)\s*(?:x|×|\*|times|multiply|multiplied by|into|by)\s*(\d+)$/);
  let name,rate,qty,customRate=false;
  if(math){name=math[1].trim();rate=Number(math[2]);qty=parseInt(math[3],10);customRate=true}
- else {const qm=s.match(/^(.*?)\s+(?:quantity\s*)?(\d+)$/);qty=qm?parseInt(qm[2],10):1;name=qm?qm[1].trim():s;rate=null}
+ else {
+   const qm=s.match(/^(.*?)\s+(?:quantity\s*)?(\d+)$/);
+   qty=qm?parseInt(qm[2],10):1;
+   name=qm?qm[1].trim():s;
+   rate=null;
+ }
  const norm=v=>v.toLowerCase().replace(/[^a-z0-9 ]/g,"").replace(/s$/,"").trim();
  let p=db.products.find(x=>norm(x.name+(x.variant?" "+x.variant:""))===norm(name))||db.products.find(x=>norm(x.name)===norm(name))||db.products.find(x=>norm(name).includes(norm(x.name)));
  if(!p){$("capturedMath").textContent='Product not found. Add "'+name+'" in Manage Products or use Quick Add.';$("voiceStatus").textContent='Heard "'+raw+'", but could not match a saved product.';return}
@@ -41,7 +46,7 @@ function parseSpeech(text){
  if(customRate)cart.push({productId:p.id,name:label,qty:qty,rate:usedRate});else add(p,qty);
  renderCart();
  $("capturedMath").textContent=label+" | "+money(usedRate)+" × "+qty+" = "+money(usedRate*qty);
- $("voiceStatus").textContent="Captured successfully: "+label+", quantity "+qty+", rate "+money(usedRate)+", amount "+money(usedRate*qty)+".";
+ $("voiceStatus").textContent="Added "+label+": "+money(usedRate)+" × "+qty+" = "+money(usedRate*qty)+". Bill total updated.";
 }
 $("voiceBtn").onclick=()=>{if(!SpeechRecognition){$("voiceStatus").textContent="Voice input is not supported in this browser. Try Chrome on Android, allow microphone access, or use Quick Add.";return}if(listening){recognition.stop();return}recognition=new SpeechRecognition();recognition.lang="en-IN";recognition.interimResults=false;recognition.maxAlternatives=1;recognition.onstart=()=>{listening=true;$("voiceBtn").classList.add("listening");$("voiceBtn").textContent="🛑 Listening… tap to stop";$("voiceStatus").textContent="Speak now, for example: American 11."};recognition.onresult=e=>parseSpeech(e.results[0][0].transcript);recognition.onerror=e=>$("voiceStatus").textContent="Voice error: "+e.error+". You can use Quick Add instead.";recognition.onend=()=>{listening=false;$("voiceBtn").classList.remove("listening");$("voiceBtn").textContent="🎙️ Start Voice Billing"};recognition.start()};
 renderProducts();renderCart();renderHistory();save();
