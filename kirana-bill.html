@@ -65,7 +65,8 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
   <strong>🧾 SAI KIRANA STORE — Bill Preview</strong>
   <div class="actions">
     <button class="secondary" type="button" id="addItem">+ Add item</button>
-    <button class="secondary" type="button" id="resetBill">Reset sample</button>
+    <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
+    <button class="secondary" type="button" id="resetBill">New empty bill</button>
     <button class="secondary" type="button" id="openBill">Open bill in new tab</button>
     <button type="button" id="printBill">Print receipt</button>
   </div>
@@ -109,12 +110,6 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
   <div class="smallprint">Thank you for shopping with us.</div>
 </section>
 <script>
-const sample=[
- {name:"American",qty:11,rate:120},
- {name:"Chams",qty:20,rate:90},
- {name:"Kings",qty:11,rate:219},
- {name:"Rrcoin",qty:21,rate:200}
-];
 const $=id=>document.getElementById(id);
 function money(n){return "₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function today(){const d=new Date();return [String(d.getDate()).padStart(2,"0"),String(d.getMonth()+1).padStart(2,"0"),d.getFullYear()].join("-")}
@@ -179,8 +174,10 @@ function calculate(){
  $("totalQty").textContent=qtyTotal.toLocaleString("en-IN");
  $("grandTotal").textContent=money(subtotal-discount);
 }
-function reset(){ $("itemRows").innerHTML="";sample.forEach(addRow);$("billNo").value="00123";$("billDate").value=today();$("billTime").value=nowTime();$("cashier").value="01";$("discount").value="0";calculate()}
+function reset(){ $("itemRows").innerHTML="";$("billNo").value="";$("billDate").value=today();$("billTime").value=nowTime();$("cashier").value="01";$("discount").value="0";$("quickProducts").value="";$("quickMessage").textContent="New empty bill ready. Add products individually or use Quick / Bulk Product Entry.";calculate()}
+function deleteAllItems(){ $("itemRows").innerHTML="";calculate(); }
 $("addItem").addEventListener("click",()=>{addRow();const rows=$("itemRows").querySelectorAll(".product");rows[rows.length-1].focus()});
+$("deleteAllItems").addEventListener("click",()=>{deleteAllItems();$("quickMessage").textContent="All bill items deleted. Total is now ₹0.00.";});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
 function openBillInNewTab(hideBillInfo=true, autoPrint=false){
