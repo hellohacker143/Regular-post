@@ -14,7 +14,7 @@ body.bill-only{background:#fff}body.bill-only .toolbar,body.bill-only .note,body
 .toolbar strong{font-size:18px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 button{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer;background:#111827;color:white}
-button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
+button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}.home-main-link{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:38px;padding:6px 12px;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:#111827;text-decoration:none;font-size:24px;font-weight:700;line-height:1}
 .note{max-width:900px;margin:0 auto 12px;padding:0 14px;color:#475569;font-size:13px}
 .receipt{width:min(100% - 20px,720px);margin:0 auto 30px;padding:28px 24px 25px;background:var(--paper);box-shadow:0 4px 24px #0f172a14}
 .store-name{font-family:Impact,"Arial Narrow",sans-serif;font-weight:900;font-size:clamp(36px,7.1vw,66px);letter-spacing:-1.1px;line-height:1.05;text-align:center;text-transform:uppercase;margin:0 0 17px;white-space:nowrap}
@@ -65,6 +65,7 @@ button.secondary{background:white;color:#111827;border:1px solid #cbd5e1}
 <div class="toolbar">
   <strong>🧾 SAI KIRANA STORE — Bill Preview</strong>
   <div class="actions">
+    <a class="secondary home-main-link" href="https://hellohacker143.github.io/Regular-post/" title="Go to main page" aria-label="Go to main page">⌂</a>
     <button class="secondary" type="button" id="addItem">+ Add item / Bulk</button>
     <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
     <button class="secondary" type="button" id="resetBill">New empty bill</button>
