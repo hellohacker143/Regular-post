@@ -137,13 +137,13 @@ function reset(){ $("itemRows").innerHTML="";sample.forEach(addRow);$("billNo").
 $("addItem").addEventListener("click",()=>{addRow();const rows=$("itemRows").querySelectorAll(".product");rows[rows.length-1].focus()});
 $("resetBill").addEventListener("click",reset);
 $("openBill").addEventListener("click",openBillInNewTab);
-function openBillInNewTab(){
+function openBillInNewTab(hideBillInfo=true, autoPrint=false){
  const tab=window.open("","_blank");
  if(!tab){alert("Please allow pop-ups for this page, then try again.");return}
  const clone=$("receipt").cloneNode(true);
  // In the clean bill preview, hide bill number, date, time, and cashier details.
  const info=clone.querySelector(".bill-info");
- if(info) info.remove();
+ if(hideBillInfo && info) info.remove();
  clone.querySelectorAll("input").forEach(input=>{
    const span=document.createElement("span");
    span.textContent=input.value;
@@ -173,8 +173,9 @@ function openBillInNewTab(){
  @media print{@page{size:80mm auto;margin:3mm} .receipt{width:74mm;max-width:none;margin:0;padding:0}.store-name{font-size:24pt;letter-spacing:-.5px;margin-bottom:8px}.dash{border-top-width:1.5px;margin:6px 0}.bill-info{font-size:11pt}.info-row{grid-template-columns:27mm 1fr;gap:1mm}.time-cashier{font-size:10pt;gap:1mm}.items-table,.items-table th{font-size:9pt}.items-table th,.items-table td{padding:3px 0}.summary{font-size:10pt}.grand-total{font-size:15pt;letter-spacing:-.4px}.thank-you{font-size:12pt;margin:8px 0}.footer-slogan{font-size:9pt}}
  </style></head><body>${receiptHTML}</body></html>`);
  tab.document.close();
+ if(autoPrint){tab.onload=()=>setTimeout(()=>tab.print(),350);}
 }
-$("printBill").addEventListener("click",()=>window.print());
+$("printBill").addEventListener("click",()=>openBillInNewTab(false,true));
 $("discount").addEventListener("input",calculate);
 reset();
 </script>
