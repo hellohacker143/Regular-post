@@ -40,7 +40,7 @@ button.light{background:white;border:1px solid var(--line);color:#222;border-rad
 </style>
 </head>
 <body>
-<header><button aria-label="Menu" onclick="toggleSettings()">☰</button><div class="brand">CalcNote</div><button aria-label="Add row" onclick="addBlank()">＋</button><button aria-label="Save product list" onclick="saveCurrentBill()">▣</button><button aria-label="Settings" onclick="toggleSettings()">⚙</button></header>
+<header><button aria-label="Menu" onclick="toggleSettings()">☰</button><div class="brand">CalcNote</div><button aria-label="Add row" onclick="addBlank()">＋</button><button aria-label="Save product list" onclick="saveCurrentBill()">▣</button><button aria-label="Product listing" onclick="location.href=&quot;products.html&quot;">▤</button><button aria-label="Settings" onclick="toggleSettings()">⚙</button></header>
 <main>
 <section class="settings" id="settings">
 <label>Shop name<input id="shopName" placeholder="My Shop"></label><button class="action" onclick="saveShop()">Save shop name</button>
@@ -48,7 +48,7 @@ button.light{background:white;border:1px solid var(--line);color:#222;border-rad
 </section>
 <section class="panel">
 <div class="entry"><textarea id="quick" placeholder="Type: Kings 219 * 5&#10;Chams 90 * 3"></textarea><button class="action" onclick="addFromText()">Add items</button></div>
-<div class="help">Example: <b>Kings 219 * 5</b> = 5 pieces × ₹219 = ₹1,095. One product per line. Saved product names and rates are suggested below.</div>
+<div class="help">Example: <b>Kings 219 * 5</b> = 5 pieces × ₹219 = ₹1,095. One product per line. <a href="products.html">Open full product listing →</a>. Saved rates can be used by typing “Chams * 5”.</div>
 <div class="print-shop" id="printShop"></div>
 <div class="list-head"><span>Bill items</span><span id="count">0 items</span></div>
 <div class="row head"><span>No.</span><span>PRODUCT</span><span style="text-align:right">QTY</span><span style="text-align:right">RATE</span><span style="text-align:right">TOTAL</span><span></span></div>
@@ -61,7 +61,7 @@ button.light{background:white;border:1px solid var(--line);color:#222;border-rad
 </div>
 </section>
 <div class="tools"><button class="action" onclick="window.print()">🖨 Print bill</button><button class="light" onclick="openPrintTab()">Open bill in new tab</button><button class="light" onclick="clearBill()">New bill</button><button class="light" onclick="deleteAll()">Delete all items</button></div>
-<section class="product-area"><h3>＋ Add product to saved list</h3><div class="saveform"><input id="newName" placeholder="Product name, e.g. Kings"><input id="newRate" type="number" min="0" step=".01" placeholder="Rate ₹"><button class="action" onclick="saveProduct()">Save</button></div><div id="saveMsg" class="help" style="padding:8px 0 0"></div><div class="product-list" id="products"></div></section>
+<section class="product-area"><h3>＋ Add product to saved list</h3><p><a href="products.html">Open full product listing →</a></p><div class="saveform"><input id="newName" placeholder="Product name, e.g. Kings"><input id="newRate" type="number" min="0" step=".01" placeholder="Rate ₹"><button class="action" onclick="saveProduct()">Save</button></div><div id="saveMsg" class="help" style="padding:8px 0 0"></div><div class="product-list" id="products"></div></section>
 </main>
 <script>
 const $=id=>document.getElementById(id);let items=[];
@@ -83,19 +83,21 @@ function render(){
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function addFromText(){
  const raw=$('quick').value.trim();if(!raw)return;
- const saved=loadStore('calcnoteProducts',[]),lines=raw.split(/\n+/);let added=0;
+ const lines=raw.split(/\n+/);let added=0,errors=[];
  for(let line of lines){
   line=line.trim();if(!line)continue;
-  // Named syntax: Kings 219*5 (rate then quantity), or Kings 5 219 (quantity then rate)
   let m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*(?:\*|x|×)\s*(\d+(?:\.\d+)?)$/i);
   if(m){const name=m[1].trim(),rate=Number(m[2]),qty=Number(m[3]);items.push({name,qty,rate});upsert(name,rate);added++;continue}
   m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/);
   if(m){const name=m[1].trim(),qty=Number(m[2]),rate=Number(m[3]);items.push({name,qty,rate});upsert(name,rate);added++;continue}
+  const saved=loadStore('calcnoteProducts',[]).sort((a,b)=>b.name.length-a.name.length);
+  const p=saved.find(x=>line.toLowerCase()===x.name.toLowerCase()||line.toLowerCase().startsWith(x.name.toLowerCase()+' ')||line.toLowerCase().startsWith(x.name.toLowerCase()+'*'));
+  if(p){const rest=line.slice(p.name.length).trim().replace(/^[*x×]\s*/i,'').trim();const qm=rest.match(/^(\d+(?:\.\d+)?)$/),qty=qm?Number(qm[1]):1;if(qty>0){items.push({name:p.name,qty,rate:Number(p.rate)});added++;continue}}
   m=line.match(/^(\d+(?:\.\d+)?)\s*([*xX/])\s*(\d+(?:\.\d+)?)$/);
-  if(m){let a=Number(m[1]),b=Number(m[3]),qty=a,rate=b;if(m[2]!=='/'&&b<=10&&a>b){qty=b;rate=a}items.push({name:'',qty,rate});added++}
-  else{const p=saved.find(x=>line.toLowerCase().startsWith(x.name.toLowerCase()+' '));if(p){const rest=line.slice(p.name.length).trim().replace(/^\*/,'').trim();const q=Number(rest);if(q>0){items.push({name:p.name,qty:q,rate:p.rate});added++}}}
+  if(m){let a=Number(m[1]),b=Number(m[3]),qty=a,rate=b;if(m[2]!=='/'&&b<=10&&a>b){qty=b;rate=a}items.push({name:'',qty,rate});added++;continue}
+  errors.push(line);
  }
- $('quick').value='';render();$('saveMsg').textContent=added+' line(s) added to bill.';
+ $('quick').value='';render();$('saveMsg').textContent=added+' line(s) added to bill.'+(errors.length?' Not understood: '+errors.join(', '):'');
 }
 function upsert(name,rate){let list=loadStore('calcnoteProducts',[]),p=list.find(x=>x.name.toLowerCase()===name.toLowerCase());if(p)p.rate=rate;else list.push({name,rate});store('calcnoteProducts',list)}
 function saveProduct(){const name=$('newName').value.trim(),rate=Number($('newRate').value);if(!name||$('newRate').value===''||rate<0)return;$('saveMsg').textContent=name+' saved at '+money(rate);upsert(name,rate);$('newName').value='';$('newRate').value='';renderProducts()}
