@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CalcNote Shop Billing</title>
+<style>
+:root{--blue:#0788c9;--line:#d7dce1;--soft:#eef2f5;--ink:#16191d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:#f3f5f7}
+header{height:70px;background:var(--blue);color:white;display:flex;align-items:center;gap:18px;padding:0 18px;box-shadow:0 2px 6px #0002}
+header .brand{font-size:27px;font-weight:700;flex:1}header button{font-size:25px;border:0;background:transparent;color:white;padding:8px;cursor:pointer}
+main{max-width:900px;margin:14px auto;padding:0 12px}
+.panel{background:white;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.entry{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px;background:#fff}
+textarea{width:100%;min-height:54px;resize:vertical;border:1px solid #cbd2d9;border-radius:7px;padding:12px;font-size:17px;font-family:inherit}
+button.action{background:var(--blue);border:0;color:white;border-radius:7px;padding:12px 15px;font-size:15px;font-weight:700;cursor:pointer}
+button.light{background:white;border:1px solid var(--line);color:#222;border-radius:7px;padding:10px 12px;font-weight:700;cursor:pointer}
+.help{padding:0 13px 12px;font-size:13px;color:#59636e}
+.list-head{display:flex;justify-content:space-between;padding:12px;background:#e8ecef;border-top:1px solid var(--line);font-weight:700}
+.rows{min-height:220px;background:white}
+.row{display:grid;grid-template-columns:30px minmax(0,1fr) 58px 84px 100px 34px;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid #edf0f2;font-size:16px}
+.row.head{background:#f6f7f8;font-size:12px;color:#5d6670;font-weight:700}
+.row input{width:100%;min-width:0;border:0;border-bottom:1px solid transparent;background:transparent;padding:4px 1px;font:inherit;outline-color:var(--blue)}
+.row input:focus{border-bottom-color:var(--blue)}
+.row .qty,.row .rate{text-align:right}.amount{text-align:right;font-weight:700;white-space:nowrap}
+.remove{border:0;background:#fce8e8;color:#b42318;border-radius:5px;font-size:19px;cursor:pointer}
+.bottom{padding:13px;background:#e8ecef;border-top:1px solid var(--line)}
+.summary{display:flex;justify-content:space-between;gap:12px;font-size:16px;margin:6px 0}
+.total{font-size:25px;font-weight:800;margin-top:12px;border-top:2px dashed #333;padding-top:12px}
+.product-area{margin-top:12px;padding:13px;background:white;border:1px solid var(--line);border-radius:9px}
+.product-area h3{margin:0 0 10px}.saveform{display:grid;grid-template-columns:1fr 110px auto;gap:8px}
+.saveform input,.settings input{width:100%;padding:11px;border:1px solid #cbd2d9;border-radius:7px;font-size:16px;min-width:0}
+.product-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px;margin-top:12px}
+.product{display:flex;justify-content:space-between;align-items:center;gap:6px;border:1px solid var(--line);background:#fafbfc;border-radius:7px;padding:10px;text-align:left;cursor:pointer}
+.product b{color:#067db8;white-space:nowrap}.product .x{color:#b42318;font-size:16px;border:0;background:transparent}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.settings{display:none;background:white;border:1px solid var(--line);border-radius:9px;padding:13px;margin-bottom:12px}.settings.show{display:block}.settings label{display:block;font-weight:700;margin:8px 0}
+@media(max-width:520px){header{height:60px;padding:0 12px}.brand{font-size:23px}main{padding:0 7px}.entry{grid-template-columns:1fr}.row{grid-template-columns:20px minmax(0,1fr) 42px 65px 78px 26px;gap:4px;padding:8px 5px;font-size:13px}.row.head{font-size:10px}.remove{font-size:15px;padding:3px}.saveform{grid-template-columns:1fr 88px}.saveform button{grid-column:1/-1}.total{font-size:21px}}
+@media print{@page{size:80mm auto;margin:3mm}body{background:white}header,.entry,.help,.product-area,.tools,.settings,.list-head .no-print,.row .remove,.row input{display:none!important}main{margin:0;padding:0;width:100%}.panel{border:0;border-radius:0}.rows{min-height:0}.row{grid-template-columns:18px minmax(0,1fr) 28px 44px 55px;gap:3px;padding:4px 0;border-bottom:0;font-size:10px}.row.head{display:grid!important;font-size:9px}.row .name-text{display:block!important}.bottom{padding:8px 0;background:white;border:0}.summary{font-size:10px}.total{font-size:15px}.print-shop{display:block!important;text-align:center;font-size:19px;font-weight:800;margin:0 0 8px}.row .num{display:block!important}}
+.print-shop{display:none}
+</style>
+</head>
+<body>
+<header><button aria-label="Menu" onclick="toggleSettings()">☰</button><div class="brand">CalcNote</div><button aria-label="Add row" onclick="addBlank()">＋</button><button aria-label="Save product list" onclick="saveCurrentBill()">▣</button><button aria-label="Settings" onclick="toggleSettings()">⚙</button></header>
+<main>
+<section class="settings" id="settings">
+<label>Shop name<input id="shopName" placeholder="My Shop"></label><button class="action" onclick="saveShop()">Save shop name</button>
+<p style="font-size:13px;color:#667">Shop name is saved in this browser.</p>
+</section>
+<section class="panel">
+<div class="entry"><textarea id="quick" placeholder="Type: Kings 219 * 5&#10;Chams 90 * 3"></textarea><button class="action" onclick="addFromText()">Add items</button></div>
+<div class="help">Example: <b>Kings 219 * 5</b> = 5 pieces × ₹219 = ₹1,095. One product per line. Saved product names and rates are suggested below.</div>
+<div class="print-shop" id="printShop"></div>
+<div class="list-head"><span>Bill items</span><span id="count">0 items</span></div>
+<div class="row head"><span>No.</span><span>PRODUCT</span><span style="text-align:right">QTY</span><span style="text-align:right">RATE</span><span style="text-align:right">TOTAL</span><span></span></div>
+<div class="rows" id="rows"></div>
+<div class="bottom">
+<div class="summary"><span>Subtotal</span><b id="subtotal">₹0.00</b></div>
+<div class="summary"><label for="discount">Discount ₹</label><input id="discount" type="number" min="0" value="0" style="width:100px;text-align:right;border:1px solid #cbd2d9;border-radius:5px;padding:5px;font-size:16px"></div>
+<div class="summary"><span>Total quantity</span><b id="qtyTotal">0</b></div>
+<div class="summary total"><span>GRAND TOTAL</span><span id="grand">₹0.00</span></div>
+</div>
+</section>
+<div class="tools"><button class="action" onclick="window.print()">🖨 Print bill</button><button class="light" onclick="openPrintTab()">Open bill in new tab</button><button class="light" onclick="clearBill()">New bill</button><button class="light" onclick="deleteAll()">Delete all items</button></div>
+<section class="product-area"><h3>＋ Add product to saved list</h3><div class="saveform"><input id="newName" placeholder="Product name, e.g. Kings"><input id="newRate" type="number" min="0" step=".01" placeholder="Rate ₹"><button class="action" onclick="saveProduct()">Save</button></div><div id="saveMsg" class="help" style="padding:8px 0 0"></div><div class="product-list" id="products"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);let items=[];
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+function loadStore(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch(e){return fallback}}
+function store(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function shop(){return localStorage.getItem('calcnoteShopName')||'MY SHOP'}
+function saveShop(){const n=$('shopName').value.trim();if(!n)return;localStorage.setItem('calcnoteShopName',n);render()}
+function toggleSettings(){const s=$('settings');s.classList.toggle('show');$('shopName').value=shop()}
+function addBlank(item={name:'',qty:1,rate:0}){items.push({...item,id:Date.now()+Math.random()});render();setTimeout(()=>document.querySelector('#rows .row:last-child input')?.focus(),20)}
+function update(i,k,v){items[i][k]=k==='name'?v:Math.max(0,Number(v)||0);render()}
+function del(i){items.splice(i,1);render()}
+function render(){
+ $('printShop').textContent=shop();$('count').textContent=items.length+' item'+(items.length===1?'':'s');
+ $('rows').innerHTML=items.map((p,i)=>'<div class="row"><span class="num">'+(i+1)+'</span><input aria-label="Product name" value="'+esc(p.name)+'" onchange="update('+i+',\'name\',this.value)" placeholder="Product"><input class="qty" aria-label="Quantity" type="number" min="0" value="'+p.qty+'" onchange="update('+i+',\'qty\',this.value)"><input class="rate" aria-label="Rate per piece" type="number" min="0" step=".01" value="'+p.rate+'" onchange="update('+i+',\'rate\',this.value)"><span class="amount">'+money(p.qty*p.rate)+'</span><button class="remove" onclick="del('+i+')" aria-label="Remove">×</button></div>').join('');
+ const sub=items.reduce((s,p)=>s+p.qty*p.rate,0),q=items.reduce((s,p)=>s+p.qty,0),discount=Math.min(sub,Math.max(0,Number($('discount').value)||0));
+ $('subtotal').textContent=money(sub);$('qtyTotal').textContent=q;$('grand').textContent=money(sub-discount);renderProducts();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addFromText(){
+ const raw=$('quick').value.trim();if(!raw)return;
+ const saved=loadStore('calcnoteProducts',[]),lines=raw.split(/\n+/);let added=0;
+ for(let line of lines){
+  line=line.trim();if(!line)continue;
+  // Named syntax: Kings 219*5 (rate then quantity), or Kings 5 219 (quantity then rate)
+  let m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*(?:\*|x|×)\s*(\d+(?:\.\d+)?)$/i);
+  if(m){const name=m[1].trim(),rate=Number(m[2]),qty=Number(m[3]);items.push({name,qty,rate});upsert(name,rate);added++;continue}
+  m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/);
+  if(m){const name=m[1].trim(),qty=Number(m[2]),rate=Number(m[3]);items.push({name,qty,rate});upsert(name,rate);added++;continue}
+  m=line.match(/^(\d+(?:\.\d+)?)\s*([*xX/])\s*(\d+(?:\.\d+)?)$/);
+  if(m){let a=Number(m[1]),b=Number(m[3]),qty=a,rate=b;if(m[2]!=='/'&&b<=10&&a>b){qty=b;rate=a}items.push({name:'',qty,rate});added++}
+  else{const p=saved.find(x=>line.toLowerCase().startsWith(x.name.toLowerCase()+' '));if(p){const rest=line.slice(p.name.length).trim().replace(/^\*/,'').trim();const q=Number(rest);if(q>0){items.push({name:p.name,qty:q,rate:p.rate});added++}}}
+ }
+ $('quick').value='';render();$('saveMsg').textContent=added+' line(s) added to bill.';
+}
+function upsert(name,rate){let list=loadStore('calcnoteProducts',[]),p=list.find(x=>x.name.toLowerCase()===name.toLowerCase());if(p)p.rate=rate;else list.push({name,rate});store('calcnoteProducts',list)}
+function saveProduct(){const name=$('newName').value.trim(),rate=Number($('newRate').value);if(!name||$('newRate').value===''||rate<0)return;$('saveMsg').textContent=name+' saved at '+money(rate);upsert(name,rate);$('newName').value='';$('newRate').value='';renderProducts()}
+function renderProducts(){const list=loadStore('calcnoteProducts',[]);$('products').innerHTML=list.length?list.map((p,i)=>'<button class="product" onclick="items.push({name:'+JSON.stringify(p.name)+',qty:1,rate:'+Number(p.rate)+'});render()"><span>'+esc(p.name)+'<br><small>Tap to add</small></span><b>'+money(p.rate)+'</b><span class="x" onclick="event.stopPropagation();removeProduct('+i+')">×</span></button>').join(''):'<span style="color:#687581;font-size:14px">No saved products yet.</span>'}
+function removeProduct(i){let p=loadStore('calcnoteProducts',[]);p.splice(i,1);store('calcnoteProducts',p);renderProducts()}
+function clearBill(){items=[];$('discount').value=0;$('quick').value='';render()}
+function deleteAll(){items=[];render()}
+function saveCurrentBill(){store('calcnoteLastBill',{shop:shop(),items,discount:$('discount').value,at:new Date().toISOString()});alert('Current bill saved in this browser.')}
+function openPrintTab(){const w=window.open('','_blank');if(!w){alert('Allow pop-ups to open the bill.');return}w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(shop())+' Bill</title><style>body{font:14px Arial;margin:18px;color:#111}h2{text-align:center}table{width:100%;border-collapse:collapse}th,td{padding:7px 3px;border-bottom:1px dashed #aaa;text-align:left}td:last-child,th:last-child{text-align:right}.total{text-align:right;font-size:20px;font-weight:bold;margin-top:15px}@media print{button{display:none}}</style></head><body><h2>'+esc(shop())+'</h2><table><thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+items.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(p.name)+'</td><td>'+p.qty+'</td><td>'+money(p.rate)+'</td><td>'+money(p.qty*p.rate)+'</td></tr>').join('')+'</tbody></table><p class="total">Grand total: '+$('grand').textContent+'</p><button onclick="window.print()">Print bill</button></body></html>');w.document.close()}
+$('discount').addEventListener('input',render);$('quick').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();addFromText()}});$('newName').addEventListener('keydown',e=>{if(e.key==='Enter')$('newRate').focus()});$('newRate').addEventListener('keydown',e=>{if(e.key==='Enter')saveProduct()});render();
+</script></body></html>
