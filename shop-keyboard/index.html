@@ -33,11 +33,11 @@ footer{text-align:center;padding:12px;color:var(--muted);font-size:12px}
 <main class="wrap">
 <section class="card entry-card">
 <h2>⌨️ Quick entry</h2>
-<div class="muted">Use the on-page keyboard only. Example: tap <b>c</b>, tap <b>6</b>, then tap <b>Add to bill</b> → Chams × 6 = ₹540. Your phone keyboard will stay hidden.</div>
-<textarea id="bulkInput" class="entry" rows="2" placeholder="Type a shortcut, e.g. c, then choose Chams ₹90" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="none" aria-label="Billing entry — use the web keyboard below"></textarea>
+<div class="muted">Tap letters on the on-page keyboard, then quantity. Example: tap <b>c</b>, tap <b>6</b>, tap <b>Add to bill</b> → Chams × 6 = ₹540. Your phone keyboard stays hidden.</div>
+<textarea id="bulkInput" class="entry" rows="2" placeholder="Tap k then 5, or enter bulk lines" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="none" aria-label="Billing entry — use the web keyboard below"></textarea>
 <div id="suggestions" class="suggestions" aria-live="polite"></div>
 <div class="row" style="margin-top:8px"><button id="addLines" style="flex:1">Add to bill</button><button class="secondary" id="clearInput">Clear text</button></div>
-<div class="hint">Shortcuts: <b>k</b> Kings ₹219 · <b>c</b> Chams ₹90 · <b>a</b> American ₹140 · <b>p</b> Parle-G ₹108 · <b>m</b> Moms Magic ₹108 · <b>v</b> Vijaya Milk ₹30</div>
+<div class="hint">Shortcuts: <b>k</b> Kings ₹219 · <b>c</b> Chams ₹90 · <b>a</b> American ₹140 · <b>p</b> Parle-G ₹108 · <b>m</b> Moms Magic ₹108 · <b>v</b> Vijaya Milk ₹30. Bulk examples: <b>c 6</b>, <b>k 5</b>, <b>Chams 90*5</b>, <b>245*1</b>.</div>
 <h2 style="margin-top:18px">Product keyboard</h2>
 <div class="quick" id="quickKeys"></div>
 <div class="pad" id="customPad" aria-label="On-screen keyboard">
@@ -45,13 +45,13 @@ footer{text-align:center;padding:12px;color:var(--muted);font-size:12px}
 <div class="keyrow inset"><button class="secondary" data-key="a">a</button><button class="secondary" data-key="s">s</button><button class="secondary" data-key="d">d</button><button class="secondary" data-key="f">f</button><button class="secondary" data-key="g">g</button><button class="secondary" data-key="h">h</button><button class="secondary" data-key="j">j</button><button class="secondary" data-key="k">k</button><button class="secondary" data-key="l">l</button></div>
 <div class="keyrow inset"><button class="secondary" data-key="z">z</button><button class="secondary" data-key="x">x</button><button class="secondary" data-key="c">c</button><button class="secondary" data-key="v">v</button><button class="secondary" data-key="b">b</button><button class="secondary" data-key="n">n</button><button class="secondary" data-key="m">m</button><button class="secondary" data-key="Backspace">⌫</button></div>
 <div class="keyrow numbers"><button class="secondary" data-key="1">1</button><button class="secondary" data-key="2">2</button><button class="secondary" data-key="3">3</button><button class="secondary" data-key="4">4</button><button class="secondary" data-key="5">5</button><button class="secondary" data-key="6">6</button><button class="secondary" data-key="7">7</button><button class="secondary" data-key="8">8</button><button class="secondary" data-key="9">9</button><button class="secondary" data-key="0">0</button></div>
-<div class="keyrow bottomkeys"><button class="secondary" data-key=",">, Bulk</button><button class="secondary spacekey" data-key=" ">Space</button><button class="secondary" data-key="Backspace">⌫</button><button class="wide" id="padAdd">Add to bill</button></div>
+<div class="keyrow bottomkeys"><button class="secondary" data-key="newline">↵ Bulk</button><button class="secondary spacekey" data-key=" ">Space</button><button class="secondary" data-key="Backspace">⌫</button><button class="wide" id="padAdd">Add to bill</button></div>
 </div>
 <details class="manage-card" open>
 <summary>Manage product shortcuts</summary>
 <p class="muted">Add or update product names, rates and shortcut keys. Saved on this device.</p>
 <div class="row" style="margin-bottom:7px"><input id="newName" placeholder="Product name"><input id="newRate" type="number" min="0" step=".01" placeholder="₹ Rate" style="max-width:105px"></div>
-<div class="row"><input id="newShortcut" placeholder="Shortcut (e.g. k)" style="max-width:120px"><button id="saveProduct" style="flex:1">Add / update</button></div>
+<div class="row"><input id="newShortcut" placeholder="Shortcut (e.g. k)" style="max-width:120px" inputmode="none"><button id="saveProduct" style="flex:1">Add / update</button></div>
 <div id="productManager"></div>
 </details>
 </section>
@@ -62,9 +62,9 @@ footer{text-align:center;padding:12px;color:var(--muted);font-size:12px}
 <div class="items"><table><thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Total</th><th class="no-print"></th></tr></thead><tbody id="billRows"></tbody></table></div>
 <div class="total-label">GRAND TOTAL</div><div class="subtotal" id="grandTotal">₹0.00</div>
 <div class="actions no-print"><button id="printBill" style="flex:1">Print bill</button><button class="secondary" id="openReceipt">Open receipt</button><button class="danger" id="clearBill">Clear bill</button></div>
-<div class="hint no-print">Simple use: tap a product shortcut, enter quantity using the web keyboard, then tap Add to bill. Example: c 6 = Chams × 6 = ₹540.</div>
+<div class="hint no-print">Tap a product shortcut, tap quantity using the custom keyboard, then tap Add to bill. You can add bulk lines too. All totals update automatically.</div>
 </section>
-</main><footer>Shortcut billing demo · Data is stored locally in this browser.</footer>
+</main><footer>Shortcut billing · Products and bill are stored in this browser on this device.</footer>
 <script>
 const defaults=[
  {key:'k',name:'Kings',rate:219},{key:'c',name:'Chams',rate:90},{key:'a',name:'American',rate:140},
@@ -73,29 +73,59 @@ const defaults=[
 const load=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}};
 let products=load('shopKeys_products',defaults), bill=load('shopKeys_bill',[]), shop=localStorage.getItem('shopKeys_name')||'My Shop', customer='';
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-const save=()=>{localStorage.setItem('shopKeys_products',JSON.stringify(products));localStorage.setItem('shopKeys_bill',JSON.stringify(bill));};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>String(s||'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-function getProduct(token){let t=norm(token);return products.find(p=>norm(p.key)===t)||products.find(p=>norm(p.name)===t)||products.find(p=>norm(p.name).startsWith(t)&&t.length>=3)}
-function addItem(product,qty){qty=Number(qty);if(!product||!Number.isFinite(qty)||qty<=0)return false;let old=bill.find(x=>x.key===product.key&&x.name===product.name&&Number(x.rate)===Number(product.rate));if(old)old.qty+=qty;else bill.push({key:product.key,name:product.name,rate:Number(product.rate),qty});save();renderBill();return true}
-function parseLines(){const input=document.getElementById('bulkInput');const lines=input.value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);let ok=0,errs=[];for(const line of lines){let m=line.match(/^(.+?)\s*(?:[*x×]\s*|\s+)(\d+(?:\.\d+)?)\s*$/i);if(!m){errs.push(line);continue}let p=getProduct(m[1]);if(!p){errs.push(line+' (product not found)');continue}addItem(p,Number(m[2]));ok++}if(ok){input.value=''}if(errs.length)alert('Could not add: '+errs.join('\n')+'\nUse format: shortcut quantity, e.g. c 6');}
-function renderKeys(){document.getElementById('quickKeys').innerHTML=products.map(p=>'<button class="productkey" data-product="'+esc(p.key)+'"><strong>'+esc(p.name)+'</strong><span>'+esc(p.key)+' · '+money(p.rate)+'</span></button>').join('');document.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>{const p=products.find(x=>x.key===b.dataset.product);if(!p)return;const input=document.getElementById('bulkInput');input.value+=(input.value.trim()?'\\n':'')+p.key+' ';renderSuggestions();});}
-function renderManager(){document.getElementById('productManager').innerHTML=products.map((p,i)=>'<div class="manage-row"><input aria-label="Product name" data-name="'+i+'" value="'+esc(p.name)+'"><input aria-label="Product rate" data-rate="'+i+'" type="number" min="0" step=".01" value="'+Number(p.rate)+'"><button class="danger small" data-delete="'+i+'">Delete</button></div><div class="muted" style="margin:-3px 0 8px 3px">Shortcut: '+esc(p.key)+'</div>').join('');document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{products.splice(+b.dataset.delete,1);saveProducts();});document.querySelectorAll('[data-name]').forEach(i=>i.onchange=()=>{products[+i.dataset.name].name=i.value.trim()||'Product';saveProducts()});document.querySelectorAll('[data-rate]').forEach(i=>i.onchange=()=>{products[+i.dataset.rate].rate=Math.max(0,Number(i.value)||0);saveProducts()});}
-function saveProducts(){localStorage.setItem('shopKeys_products',JSON.stringify(products));renderKeys();renderManager();renderBill()}
-function renderBill(){const tbody=document.getElementById('billRows');tbody.innerHTML=bill.map((p,i)=>'<tr><td>'+esc(p.name)+'<div class="muted">'+esc(p.key)+'</div></td><td class="num">'+p.qty+'</td><td class="num">'+money(p.rate)+'</td><td class="num">'+money(p.qty*p.rate)+'</td><td class="no-print"><button class="danger small" data-remove="'+i+'">×</button></td></tr>').join('');document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{bill.splice(+b.dataset.remove,1);save();renderBill()});document.getElementById('grandTotal').textContent=money(bill.reduce((s,p)=>s+p.qty*p.rate,0));document.getElementById('itemCount').textContent='('+bill.reduce((s,p)=>s+Number(p.qty),0)+' qty)';}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-document.getElementById('addLines').onclick=parseLines;document.getElementById('padAdd').onclick=parseLines;document.getElementById('clearInput').onclick=()=>{document.getElementById('bulkInput').value='';renderSuggestions()};
-document.getElementById('bulkInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();parseLines()}});
-function renderSuggestions(){const box=document.getElementById('suggestions');const input=document.getElementById('bulkInput');const text=input.value.trim();const token=text.split(/[\\s,;]+/).pop().toLowerCase();if(!token||/\\d/.test(token)){box.innerHTML='';return}const found=products.filter(p=>norm(p.key).startsWith(norm(token))||norm(p.name).startsWith(norm(token))).slice(0,6);box.innerHTML=found.map(p=>'<button class="suggestion" data-suggest="'+esc(p.key)+'"><strong>'+esc(p.name)+' · '+money(p.rate)+'</strong><span>Tap to select</span></button>').join('');box.querySelectorAll('[data-suggest]').forEach(b=>b.onclick=()=>{const p=products.find(x=>x.key===b.dataset.suggest);if(!p)return;const parts=input.value.trimEnd().split(/[\\s,;]+/);parts.pop();input.value=(parts.length?parts.join(' ')+' ':'')+p.key+' ';box.innerHTML='<div class="hint">Selected: <b>'+esc(p.name)+' · '+money(p.rate)+'</b> — now tap quantity (e.g. 6), then Add to bill.</div>';input.focus()})}
-document.getElementById('bulkInput').addEventListener('input',renderSuggestions);
-document.getElementById('customPad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;const input=document.getElementById('bulkInput');const k=b.dataset.key;let value=input.value;if(k==='Backspace'){value=value.slice(0,-1)}else if(/^[a-z]$/i.test(k)){value+=k}else if(k===' '){value+=' '}else{value+=k}input.value=value;input.setSelectionRange(value.length,value.length);renderSuggestions()});
-document.getElementById('saveProduct').onclick=()=>{const name=document.getElementById('newName').value.trim(), rate=Number(document.getElementById('newRate').value), key=document.getElementById('newShortcut').value.trim().toLowerCase();if(!name||!key||document.getElementById('newRate').value===''||rate<0){alert('Enter product name, rate and shortcut.');return}const exists=products.findIndex(p=>norm(p.key)===norm(key)||norm(p.name)===norm(name));const item={key,name,rate};if(exists>=0)products[exists]=item;else products.push(item);document.getElementById('newName').value='';document.getElementById('newRate').value='';document.getElementById('newShortcut').value='';saveProducts()};
-document.getElementById('editShopBtn').onclick=()=>{const v=prompt('Enter your shop name',shop);if(v&&v.trim()){shop=v.trim();localStorage.setItem('shopKeys_name',shop);renderShop()}};
+function persist(){try{localStorage.setItem('shopKeys_products',JSON.stringify(products));localStorage.setItem('shopKeys_bill',JSON.stringify(bill));localStorage.setItem('shopKeys_name',shop);return true}catch(e){alert('Could not save data in this browser. Check storage settings.');return false}}
+function getProduct(token){const t=norm(token);return products.find(p=>norm(p.key)===t)||products.find(p=>norm(p.name)===t)||products.filter(p=>norm(p.name).startsWith(t)&&t.length>=2).sort((a,b)=>norm(a.name).length-norm(b.name).length)[0]}
+function addItem(product,qty){qty=Number(qty);if(!product||!Number.isFinite(qty)||qty<=0)return false;const old=bill.find(x=>x.key===product.key&&x.name===product.name&&Number(x.rate)===Number(product.rate));if(old)old.qty+=qty;else bill.push({key:product.key,name:product.name,rate:Number(product.rate),qty});persist();renderBill();return true}
+function renderKeys(){document.getElementById('quickKeys').innerHTML=products.map(p=>'<button class="productkey" data-product="'+esc(p.key)+'"><strong>'+esc(p.name)+'</strong><span>'+esc(p.key)+' · '+money(p.rate)+'</span></button>').join('');document.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>{const p=products.find(x=>x.key===b.dataset.product);if(!p)return;const input=document.getElementById('bulkInput');input.value+=(input.value.trim()?'\n':'')+p.key+' ';renderSuggestions()})}
+function renderManager(){document.getElementById('productManager').innerHTML=products.map((p,i)=>'<div class="manage-row"><input aria-label="Product name" data-name="'+i+'" value="'+esc(p.name)+'" inputmode="none"><input aria-label="Product rate" data-rate="'+i+'" type="number" min="0" step=".01" value="'+Number(p.rate)+'"><button class="danger small" data-delete="'+i+'">Delete</button></div><div class="muted" style="margin:-3px 0 8px 3px">Shortcut: '+esc(p.key)+'</div>').join('');document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{products.splice(+b.dataset.delete,1);persist();renderAll()});document.querySelectorAll('[data-name]').forEach(i=>i.onchange=()=>{products[+i.dataset.name].name=i.value.trim()||'Product';persist();renderAll()});document.querySelectorAll('[data-rate]').forEach(i=>i.onchange=()=>{products[+i.dataset.rate].rate=Math.max(0,Number(i.value)||0);persist();renderAll()})}
+function renderBill(){const tbody=document.getElementById('billRows');tbody.innerHTML=bill.map((p,i)=>'<tr><td>'+esc(p.name)+'<div class="muted">'+esc(p.key)+'</div></td><td class="num">'+p.qty+'</td><td class="num">'+money(p.rate)+'</td><td class="num">'+money(p.qty*p.rate)+'</td><td class="no-print"><button class="danger small" data-remove="'+i+'">×</button></td></tr>').join('');document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{bill.splice(+b.dataset.remove,1);persist();renderBill()});document.getElementById('grandTotal').textContent=money(bill.reduce((s,p)=>s+p.qty*p.rate,0));document.getElementById('itemCount').textContent='('+bill.reduce((s,p)=>s+Number(p.qty),0)+' qty)'}
 function renderShop(){document.getElementById('shopTitle').textContent=shop;document.getElementById('printShopName').textContent=shop;document.title=shop+' — Quick Billing'}
+function renderAll(){renderKeys();renderManager();renderBill();renderSuggestions()}
+function parseLines(){
+ const input=document.getElementById('bulkInput'),raw=input.value.trim();if(!raw)return;
+ const lines=raw.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);let ok=0,errs=[];
+ for(let line of lines){
+  // Allows shortcut + quantity: c 6 / k*5. Named product + rate*qty: Chams 90*5.
+  let m=line.match(/^(.+?)\s*(?:\*|x|×)\s*(\d+(?:\.\d+)?)\s*$/i);
+  if(m){
+   let left=m[1].trim(),qty=Number(m[2]),named=left.match(/^(.+?)\s+(\d+(?:\.\d+)?)$/);
+   if(named){const p=getProduct(named[1]);if(p){addItem({...p,rate:Number(named[2])},qty);ok++;continue}}
+   const p=getProduct(left);if(p){addItem(p,qty);ok++;continue}
+   const direct=left.match(/^(\d+(?:\.\d+)?)$/);if(direct){addItem({key:'',name:'',rate:Number(direct[1])},qty);ok++;continue}
+   errs.push(line+' (product not found)');continue;
+  }
+  // shortcut qty / product name qty / product-name qty
+  m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*$/);
+  if(m){const p=getProduct(m[1]);if(p){addItem(p,Number(m[2]));ok++;continue}
+   const tokens=m[1].trim().split(/\s+/);
+   if(tokens.length>=2){const last=tokens.pop(),maybeRate=Number(last),p2=getProduct(tokens.join(' '));if(p2&&Number.isFinite(maybeRate)){addItem({...p2,rate:maybeRate},Number(m[2]));ok++;continue}}
+   errs.push(line+' (product not found)');continue;
+  }
+  // A bare shortcut/product means quantity one.
+  const p=getProduct(line);if(p){addItem(p,1);ok++;continue}
+  // Direct price arithmetic: 245*1, 35*6
+  const math=line.match(/^(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)$/);if(math){addItem({key:'',name:'',rate:Number(math[1])},Number(math[2]));ok++;continue}
+  errs.push(line);
+ }
+ if(ok)input.value='';
+ document.getElementById('entryMessage')?.remove();
+ let msg=document.createElement('div');msg.id='entryMessage';msg.className='hint';msg.textContent=ok+' line(s) added.'+(errs.length?' Could not read: '+errs.join('; '):'');input.insertAdjacentElement('afterend',msg);
+ renderBill();
+}
+function renderSuggestions(){const box=document.getElementById('suggestions'),input=document.getElementById('bulkInput'),text=input.value.trim();const token=text.split(/[\s,;]+/).pop().toLowerCase();if(!token||/\d/.test(token)){box.innerHTML='';return}const found=products.filter(p=>norm(p.key).startsWith(norm(token))||norm(p.name).startsWith(norm(token))).slice(0,6);box.innerHTML=found.map(p=>'<button class="suggestion" data-suggest="'+esc(p.key)+'"><strong>'+esc(p.name)+' · '+money(p.rate)+'</strong><span>Tap to select</span></button>').join('');box.querySelectorAll('[data-suggest]').forEach(b=>b.onclick=()=>{const p=products.find(x=>x.key===b.dataset.suggest);if(!p)return;input.value+=(input.value.trimEnd()?' ':'')+p.key+' ';box.innerHTML='<div class="hint">Selected: <b>'+esc(p.name)+' · '+money(p.rate)+'</b> — tap a quantity, then Add to bill.</div>';input.focus()})}
+document.getElementById('addLines').onclick=parseLines;document.getElementById('padAdd').onclick=parseLines;document.getElementById('clearInput').onclick=()=>{document.getElementById('bulkInput').value='';document.getElementById('entryMessage')?.remove();renderSuggestions()};
+document.getElementById('bulkInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();parseLines()}});
+document.getElementById('bulkInput').addEventListener('input',renderSuggestions);
+document.getElementById('customPad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;const input=document.getElementById('bulkInput'),k=b.dataset.key;let v=input.value;if(k==='Backspace')v=v.slice(0,-1);else if(k==='newline')v+='\n';else v+=k;input.value=v;input.focus({preventScroll:true});input.setSelectionRange(v.length,v.length);renderSuggestions()});
+document.getElementById('saveProduct').onclick=()=>{const name=document.getElementById('newName').value.trim(),rateText=document.getElementById('newRate').value,rate=Number(rateText),key=document.getElementById('newShortcut').value.trim().toLowerCase();if(!name||!key||rateText===''||!Number.isFinite(rate)||rate<0){alert('Enter product name, rate and shortcut.');return}const idx=products.findIndex(p=>norm(p.key)===norm(key)||norm(p.name)===norm(name));const item={key,name,rate};if(idx>=0)products[idx]=item;else products.push(item);document.getElementById('newName').value='';document.getElementById('newRate').value='';document.getElementById('newShortcut').value='';persist();renderAll()};
+document.getElementById('editShopBtn').onclick=()=>{const v=prompt('Enter your shop name',shop);if(v&&v.trim()){shop=v.trim();persist();renderShop()}};
 document.getElementById('saveCustomer').onclick=()=>{customer=document.getElementById('customer').value.trim();alert(customer?'Customer name added to receipt.':'Customer name cleared.')};
 document.getElementById('printBill').onclick=()=>{document.getElementById('printDate').textContent=new Date().toLocaleString('en-IN')+(customer?' · Customer: '+customer:'');window.print()};
-document.getElementById('openReceipt').onclick=()=>{const w=window.open('','_blank');if(!w){alert('Allow pop-ups in your browser to open the receipt.');return}const rows=bill.map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+p.qty+'</td><td>'+money(p.rate)+'</td><td>'+money(p.qty*p.rate)+'</td></tr>').join('');w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>Receipt</title><style>body{font:14px system-ui;padding:20px;max-width:720px;margin:auto}table{width:100%;border-collapse:collapse}td,th{padding:8px 4px;border-bottom:1px solid #ddd;text-align:left}.total{text-align:right;font-size:23px;font-weight:bold;margin-top:20px}@media print{button{display:none}}</style></head><body><h2>'+esc(shop)+'</h2><p>'+new Date().toLocaleString('en-IN')+(customer?' · Customer: '+esc(customer):'')+'</p><table><thead><tr><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table><div class="total">Grand Total: '+money(bill.reduce((s,p)=>s+p.qty*p.rate,0))+'</div><p><button onclick="print()">Print receipt</button></p></body></html>');w.document.close()};
-document.getElementById('clearBill').onclick=()=>{if(confirm('Clear all items from this bill?')){bill=[];save();renderBill()}};
-renderShop();renderKeys();renderManager();renderBill();renderSuggestions();
+document.getElementById('openReceipt').onclick=()=>{const w=window.open('','_blank');if(!w){alert('Allow pop-ups in your browser to open the receipt.');return}const rows=bill.map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+p.qty+'</td><td>'+money(p.rate)+'</td><td>'+money(p.qty*p.rate)+'</td></tr>').join('');w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>'+esc(shop)+' — Receipt</title><style>body{font:14px system-ui;padding:20px;max-width:720px;margin:auto}table{width:100%;border-collapse:collapse}td,th{padding:8px 4px;border-bottom:1px solid #ddd;text-align:left}.total{text-align:right;font-size:23px;font-weight:bold;margin-top:20px}@media print{button{display:none}}</style></head><body><h2>'+esc(shop)+'</h2><p>'+new Date().toLocaleString('en-IN')+(customer?' · Customer: '+esc(customer):'')+'</p><table><thead><tr><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table><div class="total">Grand Total: '+money(bill.reduce((s,p)=>s+p.qty*p.rate,0))+'</div><p><button onclick="print()">Print receipt</button></p></body></html>');w.document.close()};
+document.getElementById('clearBill').onclick=()=>{if(confirm('Clear all items from this bill?')){bill=[];persist();renderBill()}};
+renderShop();renderAll();
 </script>
 </body>
 </html>
