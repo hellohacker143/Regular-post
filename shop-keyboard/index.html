@@ -1,131 +1,41 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101827">
-<title>Shop Keys — Quick Billing</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f7fb"><title>Simple Shop Billing</title>
 <style>
-:root{--bg:#f3f6fb;--panel:#fff;--ink:#172033;--muted:#65718a;--blue:#2563eb;--line:#e1e7f0;--green:#087f5b;--red:#c24140}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
-header{background:#101827;color:#fff;padding:17px 16px 18px}header .top{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:21px;margin:0}header p{margin:4px 0 0;color:#c6d0e1;font-size:13px}
-.wrap{max-width:1000px;margin:16px auto;padding:0 12px 32px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:14px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 4px 18px #15213b08;min-width:0}
-h2{font-size:17px;margin:0 0 12px}.muted{color:var(--muted);font-size:13px}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}
-input,textarea,button{font:inherit}input,textarea{width:100%;border:1px solid #cfd8e6;border-radius:10px;padding:11px;background:#fff;color:var(--ink);outline:none}input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}
-button{border:0;border-radius:10px;padding:11px 13px;background:var(--blue);color:#fff;font-weight:650;cursor:pointer}button:active{transform:scale(.98)}button.secondary{background:#e9eef8;color:#263651}button.danger{background:#fff0f0;color:var(--red)}button.small{padding:7px 9px;font-size:13px}.entry{font-size:18px;letter-spacing:.2px}
-.hint{background:#eef5ff;border-radius:10px;padding:10px;color:#1e478a;font-size:13px;margin:10px 0}
-.suggestions{display:grid;gap:6px;margin-top:7px}.suggestion{display:flex;justify-content:space-between;align-items:center;text-align:left;background:#eaf2ff;color:#172033;border:1px solid #c7d9ff;padding:10px 12px}.suggestion span{font-size:13px;color:#425779}
-.quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.productkey{background:#fff;border:1px solid var(--line);color:var(--ink);text-align:left;padding:11px 9px}.productkey strong{display:block;font-size:14px}.productkey span{font-size:12px;color:var(--muted)}.productkey:active{background:#edf4ff}
-.pad{display:grid;gap:7px;margin-top:10px}.keyrow{display:flex;justify-content:center;gap:5px}.keyrow button{flex:1;min-width:0;padding:13px 0;border-radius:9px;font-size:15px;text-transform:lowercase;box-shadow:0 2px 0 #d7dfed}.keyrow.inset{padding:0 4%}.keyrow.numbers button{background:#f7f9fd}.keyrow.bottomkeys .spacekey{flex:2}.keyrow.bottomkeys .wide{flex:1.4;background:var(--blue);color:white}
-@media(max-width:420px){.keyrow{gap:4px}.keyrow button{padding:12px 0;font-size:14px}}
-.items{margin-top:12px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 5px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{color:var(--muted);font-weight:600}td.num,th.num{text-align:right;white-space:nowrap}.subtotal{font-weight:700;font-size:24px;text-align:right;margin:14px 0 5px}.total-label{color:var(--muted);font-size:12px;text-align:right}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-fieldset{border:0;padding:0;margin:0}details{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}summary{font-weight:650;cursor:pointer}.manage-row{display:grid;grid-template-columns:1fr 80px 58px;gap:6px;margin:7px 0}
-footer{text-align:center;padding:12px;color:var(--muted);font-size:12px}
-@media(max-width:760px){.wrap{grid-template-columns:1fr;margin-top:10px}.quick{grid-template-columns:repeat(3,minmax(0,1fr))}.entry{font-size:16px}.card{padding:13px}}
-@media(max-width:360px){.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.row.wrapsmall{flex-wrap:wrap}}
-@media print{body{background:#fff}header,.entry-card,.manage-card,.actions,.hint,.quick,.pad,.no-print,footer{display:none!important}.wrap{display:block;margin:0;padding:0;max-width:none}.card{border:0;box-shadow:none;padding:0}.receipt-heading{display:block!important}table{font-size:12px}th,td{padding:7px 3px}.subtotal{font-size:20px}.receipt-heading{margin-bottom:12px}.receipt-heading h2{margin:0}.receipt-heading div{font-size:12px}}
-.receipt-heading{display:none}
-</style>
-</head>
-<body>
-<header><div class="top"><div><h1 id="shopTitle">Shop Keys</h1><p>Quick product shortcuts · custom web keyboard · instant bill</p></div><button class="secondary" id="editShopBtn">Shop name</button></div></header>
-<main class="wrap">
-<section class="card entry-card">
-<h2>⌨️ Quick entry</h2>
-<div class="muted">Type directly in this text field: <b>Kings 219*5</b> or <b>Chams 90*6</b>, then tap <b>Add to bill</b>. You can enter multiple items on separate lines.</div>
-<textarea id="bulkInput" class="entry" rows="2" placeholder="Kings 219*5&#10;Chams 90*6" autocomplete="off" autocapitalize="words" spellcheck="false" inputmode="text" aria-label="Billing entry — use the web keyboard below"></textarea>
-<div id="suggestions" class="suggestions" aria-live="polite"></div>
-<div class="row" style="margin-top:8px"><button id="addLines" style="flex:1">Add to bill</button><button class="secondary" id="clearInput">Clear text</button></div>
-<div class="hint">Shortcuts: <b>k</b> Kings ₹219 · <b>c</b> Chams ₹90 · <b>a</b> American ₹140 · <b>p</b> Parle-G ₹108 · <b>m</b> Moms Magic ₹108 · <b>v</b> Vijaya Milk ₹30. Examples: <b>Kings 219*5</b>, <b>Chams 90*6</b>, <b>American 140*2</b>. Enter one item per line.</div>
-<h2 style="margin-top:18px">Product keyboard</h2>
-<div class="quick" id="quickKeys"></div>
-<div class="pad" id="customPad" aria-label="On-screen keyboard">
-<div class="keyrow"><button class="secondary" data-key="q">q</button><button class="secondary" data-key="w">w</button><button class="secondary" data-key="e">e</button><button class="secondary" data-key="r">r</button><button class="secondary" data-key="t">t</button><button class="secondary" data-key="y">y</button><button class="secondary" data-key="u">u</button><button class="secondary" data-key="i">i</button><button class="secondary" data-key="o">o</button><button class="secondary" data-key="p">p</button></div>
-<div class="keyrow inset"><button class="secondary" data-key="a">a</button><button class="secondary" data-key="s">s</button><button class="secondary" data-key="d">d</button><button class="secondary" data-key="f">f</button><button class="secondary" data-key="g">g</button><button class="secondary" data-key="h">h</button><button class="secondary" data-key="j">j</button><button class="secondary" data-key="k">k</button><button class="secondary" data-key="l">l</button></div>
-<div class="keyrow inset"><button class="secondary" data-key="z">z</button><button class="secondary" data-key="x">x</button><button class="secondary" data-key="c">c</button><button class="secondary" data-key="v">v</button><button class="secondary" data-key="b">b</button><button class="secondary" data-key="n">n</button><button class="secondary" data-key="m">m</button><button class="secondary" data-key="Backspace">⌫</button></div>
-<div class="keyrow numbers"><button class="secondary" data-key="1">1</button><button class="secondary" data-key="2">2</button><button class="secondary" data-key="3">3</button><button class="secondary" data-key="4">4</button><button class="secondary" data-key="5">5</button><button class="secondary" data-key="6">6</button><button class="secondary" data-key="7">7</button><button class="secondary" data-key="8">8</button><button class="secondary" data-key="9">9</button><button class="secondary" data-key="0">0</button></div>
-<div class="keyrow bottomkeys"><button class="secondary" data-key="newline">↵ Bulk</button><button class="secondary spacekey" data-key=" ">Space</button><button class="secondary" data-key="Backspace">⌫</button><button class="wide" id="padAdd">Add to bill</button></div>
-</div>
-<details class="manage-card" open>
-<summary>Manage product shortcuts</summary>
-<p class="muted">Add or update product names, rates and shortcut keys. Saved on this device.</p>
-<div class="row" style="margin-bottom:7px"><input id="newName" placeholder="Product name"><input id="newRate" type="number" min="0" step=".01" placeholder="₹ Rate" style="max-width:105px"></div>
-<div class="row"><input id="newShortcut" placeholder="Shortcut (e.g. k)" style="max-width:120px" inputmode="none"><button id="saveProduct" style="flex:1">Add / update</button></div>
-<div id="productManager"></div>
-</details>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#172033;font:16px system-ui,-apple-system,Segoe UI,sans-serif}header{background:#fff;border-bottom:1px solid #e1e7f0;padding:16px}header .top{max-width:760px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:22px;margin:0}main{max-width:760px;margin:18px auto;padding:0 12px 28px}.card{background:#fff;border:1px solid #e1e7f0;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 4px 16px #15213b08}h2{font-size:18px;margin:0 0 12px}textarea,input,button{font:inherit}textarea,input{width:100%;border:1px solid #ccd5e3;border-radius:11px;padding:13px;background:white;color:#172033}textarea{min-height:125px;resize:vertical;font-size:17px;line-height:1.55}textarea:focus,input:focus{outline:2px solid #b9d1ff;border-color:#2563eb}.help{font-size:13px;color:#66738a;margin:0 0 10px;line-height:1.5}.buttons{display:flex;gap:8px;margin-top:10px}button{border:0;border-radius:10px;padding:12px 14px;font-weight:650;cursor:pointer;background:#2563eb;color:white}.buttons button:first-child{flex:1}.light{background:#e9eef7;color:#263651}.red{background:#fff0f0;color:#b42318}.status{font-size:13px;margin-top:10px;color:#087f5b;white-space:pre-wrap}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 5px;border-bottom:1px solid #e7ebf2}th{font-size:12px;color:#69758a}td.num,th.num{text-align:right;white-space:nowrap}.total-label{text-align:right;color:#66738a;font-size:12px;margin-top:16px}.total{text-align:right;font-size:27px;font-weight:750;margin:2px 0 0}.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.actions button{flex:1}.small{padding:7px 10px;font-size:13px}.muted{font-size:12px;color:#68758b}details{border-top:1px solid #e7ebf2;margin-top:14px;padding-top:13px}summary{font-weight:650;cursor:pointer}.manage{display:grid;grid-template-columns:1fr 100px 70px;gap:6px;margin-top:8px}.product-add{display:grid;grid-template-columns:1fr 100px;gap:8px;margin:10px 0}.manage input{padding:8px;font-size:14px}footer{text-align:center;color:#7a8497;font-size:12px;padding:0 10px 20px}@media(max-width:420px){.card{padding:13px}main{margin-top:12px}.buttons{gap:6px}.buttons button{padding:12px 8px}.manage{grid-template-columns:1fr 78px 60px}}@media print{body{background:#fff}header,.entry-card,.no-print,footer{display:none!important}main{margin:0;padding:0}.card{border:0;box-shadow:none;padding:0}th,td{padding:8px 3px}.total{font-size:22px}}
+</style></head>
+<body><header><div class="top"><h1 id="shopTitle">My Shop</h1><button class="light no-print" id="shopNameBtn">Shop name</button></div></header>
+<main>
+<section class="card entry-card"><h2>Add items</h2><p class="help">Enter one item per line using <b>Product Rate*Quantity</b>. Example: Kings 219*5. Add as many lines as you need.</p>
+<textarea id="itemsInput" placeholder="Kings 219*5&#10;Chams 90*6&#10;American 140*2" autocapitalize="off" spellcheck="false"></textarea>
+<div class="buttons"><button id="addBtn">Add to bill</button><button class="light" id="clearText">Clear text</button></div><div class="status" id="status" aria-live="polite"></div>
+<details><summary>Manage products and prices</summary><p class="help">Add or update a product name and its default rate. These are saved in this browser.</p>
+<div class="product-add"><input id="productName" placeholder="Product name"><input id="productRate" type="number" min="0" step=".01" placeholder="Rate ₹"></div><div class="buttons"><button id="saveProduct">Save product</button></div><div id="productList"></div></details>
 </section>
-<section class="card">
-<div class="receipt-heading"><h2 id="printShopName">Shop Keys</h2><div id="printDate"></div><p>Bill / Receipt</p></div>
-<h2>🧾 Current bill <span class="muted" id="itemCount"></span></h2>
-<div class="row no-print" style="margin-bottom:10px"><input id="customer" placeholder="Customer name (optional)"><button class="secondary small" id="saveCustomer">Set</button></div>
-<div class="items"><table><thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Total</th><th class="no-print"></th></tr></thead><tbody id="billRows"></tbody></table></div>
-<div class="total-label">GRAND TOTAL</div><div class="subtotal" id="grandTotal">₹0.00</div>
-<div class="actions no-print"><button id="printBill" style="flex:1">Print bill</button><button class="secondary" id="openReceipt">Open receipt</button><button class="danger" id="clearBill">Clear bill</button></div>
-<div class="hint no-print">Tap a product shortcut, tap quantity using the custom keyboard, then tap Add to bill. You can add bulk lines too. All totals update automatically.</div>
-</section>
-</main><footer>Shortcut billing · Products and bill are stored in this browser on this device.</footer>
+<section class="card"><h2>Current bill <span class="muted" id="count"></span></h2><div class="no-print" style="margin-bottom:10px"><input id="customer" placeholder="Customer name (optional)"></div>
+<div class="tablewrap"><table><thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th><th class="no-print"></th></tr></thead><tbody id="billRows"></tbody></table></div>
+<div class="total-label">GRAND TOTAL</div><div class="total" id="grandTotal">₹0.00</div>
+<div class="actions no-print"><button id="printBtn">Print bill</button><button class="light" id="receiptBtn">Open receipt</button><button class="red" id="clearBill">Clear bill</button></div>
+</section></main><footer>Simple billing page · Data is saved in this browser on this device.</footer>
 <script>
-const defaults=[
- {key:'k',name:'Kings',rate:219},{key:'c',name:'Chams',rate:90},{key:'a',name:'American',rate:140},
- {key:'p',name:'Parle-G',rate:108},{key:'m',name:'Moms Magic',rate:108},{key:'v',name:'Vijaya Milk',rate:30}
-];
+const defaults=[{name:'Kings',rate:219},{name:'Chams',rate:90},{name:'American',rate:140},{name:'Parle-G',rate:108},{name:'Moms Magic',rate:108},{name:'Vijaya Milk',rate:30}];
 const load=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}};
-let products=load('shopKeys_products',defaults), bill=load('shopKeys_bill',[]), shop=localStorage.getItem('shopKeys_name')||'My Shop', customer='';
+let products=load('simpleBillProducts',defaults),bill=load('simpleBillItems',[]),shop=localStorage.getItem('simpleBillShop')||'My Shop';
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm=s=>String(s||'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-function persist(){try{localStorage.setItem('shopKeys_products',JSON.stringify(products));localStorage.setItem('shopKeys_bill',JSON.stringify(bill));localStorage.setItem('shopKeys_name',shop);return true}catch(e){alert('Could not save data in this browser. Check storage settings.');return false}}
-function getProduct(token){const t=norm(token);return products.find(p=>norm(p.key)===t)||products.find(p=>norm(p.name)===t)||products.filter(p=>norm(p.name).startsWith(t)&&t.length>=2).sort((a,b)=>norm(a.name).length-norm(b.name).length)[0]}
-function addItem(product,qty){qty=Number(qty);if(!product||!Number.isFinite(qty)||qty<=0)return false;const old=bill.find(x=>x.key===product.key&&x.name===product.name&&Number(x.rate)===Number(product.rate));if(old)old.qty+=qty;else bill.push({key:product.key,name:product.name,rate:Number(product.rate),qty});persist();renderBill();return true}
-function renderKeys(){document.getElementById('quickKeys').innerHTML=products.map(p=>'<button class="productkey" data-product="'+esc(p.key)+'"><strong>'+esc(p.name)+'</strong><span>'+esc(p.key)+' · '+money(p.rate)+'</span></button>').join('');document.querySelectorAll('[data-product]').forEach(b=>b.onclick=()=>{const p=products.find(x=>x.key===b.dataset.product);if(!p)return;const input=document.getElementById('bulkInput');input.value+=(input.value.trim()?'\n':'')+p.key+' ';renderSuggestions()})}
-function renderManager(){document.getElementById('productManager').innerHTML=products.map((p,i)=>'<div class="manage-row"><input aria-label="Product name" data-name="'+i+'" value="'+esc(p.name)+'" inputmode="none"><input aria-label="Product rate" data-rate="'+i+'" type="number" min="0" step=".01" value="'+Number(p.rate)+'"><button class="danger small" data-delete="'+i+'">Delete</button></div><div class="muted" style="margin:-3px 0 8px 3px">Shortcut: '+esc(p.key)+'</div>').join('');document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{products.splice(+b.dataset.delete,1);persist();renderAll()});document.querySelectorAll('[data-name]').forEach(i=>i.onchange=()=>{products[+i.dataset.name].name=i.value.trim()||'Product';persist();renderAll()});document.querySelectorAll('[data-rate]').forEach(i=>i.onchange=()=>{products[+i.dataset.rate].rate=Math.max(0,Number(i.value)||0);persist();renderAll()})}
-function renderBill(){const tbody=document.getElementById('billRows');tbody.innerHTML=bill.map((p,i)=>'<tr><td>'+esc(p.name)+'<div class="muted">'+esc(p.key)+'</div></td><td class="num">'+p.qty+'</td><td class="num">'+money(p.rate)+'</td><td class="num">'+money(p.qty*p.rate)+'</td><td class="no-print"><button class="danger small" data-remove="'+i+'">×</button></td></tr>').join('');document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{bill.splice(+b.dataset.remove,1);persist();renderBill()});document.getElementById('grandTotal').textContent=money(bill.reduce((s,p)=>s+p.qty*p.rate,0));document.getElementById('itemCount').textContent='('+bill.reduce((s,p)=>s+Number(p.qty),0)+' qty)'}
-function renderShop(){document.getElementById('shopTitle').textContent=shop;document.getElementById('printShopName').textContent=shop;document.title=shop+' — Quick Billing'}
-function renderAll(){renderKeys();renderManager();renderBill();renderSuggestions()}
-function parseLines(){
- const input=document.getElementById('bulkInput'),raw=input.value.trim();if(!raw)return;
- const lines=raw.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);let ok=0,errs=[];
- for(let line of lines){
-  // Allows shortcut + quantity: c 6 / k*5. Named product + rate*qty: Chams 90*5.
-  let m=line.match(/^(.+?)\s*(?:\*|x|×)\s*(\d+(?:\.\d+)?)\s*$/i);
-  if(m){
-   let left=m[1].trim(),qty=Number(m[2]),named=left.match(/^(.+?)\s+(\d+(?:\.\d+)?)$/);
-   if(named){const p=getProduct(named[1]);if(p){addItem({...p,rate:Number(named[2])},qty);ok++;continue}}
-   const p=getProduct(left);if(p){addItem(p,qty);ok++;continue}
-   const direct=left.match(/^(\d+(?:\.\d+)?)$/);if(direct){addItem({key:'',name:'',rate:Number(direct[1])},qty);ok++;continue}
-   errs.push(line+' (product not found)');continue;
-  }
-  // shortcut qty / product name qty / product-name qty
-  m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*$/);
-  if(m){const p=getProduct(m[1]);if(p){addItem(p,Number(m[2]));ok++;continue}
-   const tokens=m[1].trim().split(/\s+/);
-   if(tokens.length>=2){const last=tokens.pop(),maybeRate=Number(last),p2=getProduct(tokens.join(' '));if(p2&&Number.isFinite(maybeRate)){addItem({...p2,rate:maybeRate},Number(m[2]));ok++;continue}}
-   errs.push(line+' (product not found)');continue;
-  }
-  // A bare shortcut/product means quantity one.
-  const p=getProduct(line);if(p){addItem(p,1);ok++;continue}
-  // Direct price arithmetic: 245*1, 35*6
-  const math=line.match(/^(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)$/);if(math){addItem({key:'',name:'',rate:Number(math[1])},Number(math[2]));ok++;continue}
-  errs.push(line);
- }
- if(ok)input.value='';
- document.getElementById('entryMessage')?.remove();
- let msg=document.createElement('div');msg.id='entryMessage';msg.className='hint';msg.textContent=ok+' line(s) added.'+(errs.length?' Could not read: '+errs.join('; '):'');input.insertAdjacentElement('afterend',msg);
- renderBill();
-}
-function renderSuggestions(){const box=document.getElementById('suggestions'),input=document.getElementById('bulkInput'),text=input.value.trim();const token=text.split(/[\s,;]+/).pop().toLowerCase();if(!token||/\d/.test(token)){box.innerHTML='';return}const found=products.filter(p=>norm(p.key).startsWith(norm(token))||norm(p.name).startsWith(norm(token))).slice(0,6);box.innerHTML=found.map(p=>'<button class="suggestion" data-suggest="'+esc(p.key)+'"><strong>'+esc(p.name)+' · '+money(p.rate)+'</strong><span>Tap to select</span></button>').join('');box.querySelectorAll('[data-suggest]').forEach(b=>b.onclick=()=>{const p=products.find(x=>x.key===b.dataset.suggest);if(!p)return;input.value+=(input.value.trimEnd()?' ':'')+p.key+' ';box.innerHTML='<div class="hint">Selected: <b>'+esc(p.name)+' · '+money(p.rate)+'</b> — tap a quantity, then Add to bill.</div>';input.focus()})}
-document.getElementById('addLines').onclick=parseLines;document.getElementById('padAdd').onclick=parseLines;document.getElementById('clearInput').onclick=()=>{document.getElementById('bulkInput').value='';document.getElementById('entryMessage')?.remove();renderSuggestions()};
-document.getElementById('bulkInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();parseLines()}});
-document.getElementById('bulkInput').addEventListener('input',renderSuggestions);
-document.getElementById('customPad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;const input=document.getElementById('bulkInput'),k=b.dataset.key;let v=input.value;if(k==='Backspace')v=v.slice(0,-1);else if(k==='newline')v+='\n';else v+=k;input.value=v;input.focus({preventScroll:true});input.setSelectionRange(v.length,v.length);renderSuggestions()});
-document.getElementById('saveProduct').onclick=()=>{const name=document.getElementById('newName').value.trim(),rateText=document.getElementById('newRate').value,rate=Number(rateText),key=document.getElementById('newShortcut').value.trim().toLowerCase();if(!name||!key||rateText===''||!Number.isFinite(rate)||rate<0){alert('Enter product name, rate and shortcut.');return}const idx=products.findIndex(p=>norm(p.key)===norm(key)||norm(p.name)===norm(name));const item={key,name,rate};if(idx>=0)products[idx]=item;else products.push(item);document.getElementById('newName').value='';document.getElementById('newRate').value='';document.getElementById('newShortcut').value='';persist();renderAll()};
-document.getElementById('editShopBtn').onclick=()=>{const v=prompt('Enter your shop name',shop);if(v&&v.trim()){shop=v.trim();persist();renderShop()}};
-document.getElementById('saveCustomer').onclick=()=>{customer=document.getElementById('customer').value.trim();alert(customer?'Customer name added to receipt.':'Customer name cleared.')};
-document.getElementById('printBill').onclick=()=>{document.getElementById('printDate').textContent=new Date().toLocaleString('en-IN')+(customer?' · Customer: '+customer:'');window.print()};
-document.getElementById('openReceipt').onclick=()=>{const w=window.open('','_blank');if(!w){alert('Allow pop-ups in your browser to open the receipt.');return}const rows=bill.map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+p.qty+'</td><td>'+money(p.rate)+'</td><td>'+money(p.qty*p.rate)+'</td></tr>').join('');w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>'+esc(shop)+' — Receipt</title><style>body{font:14px system-ui;padding:20px;max-width:720px;margin:auto}table{width:100%;border-collapse:collapse}td,th{padding:8px 4px;border-bottom:1px solid #ddd;text-align:left}.total{text-align:right;font-size:23px;font-weight:bold;margin-top:20px}@media print{button{display:none}}</style></head><body><h2>'+esc(shop)+'</h2><p>'+new Date().toLocaleString('en-IN')+(customer?' · Customer: '+esc(customer):'')+'</p><table><thead><tr><th>Product</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table><div class="total">Grand Total: '+money(bill.reduce((s,p)=>s+p.qty*p.rate,0))+'</div><p><button onclick="print()">Print receipt</button></p></body></html>');w.document.close()};
-document.getElementById('clearBill').onclick=()=>{if(confirm('Clear all items from this bill?')){bill=[];persist();renderBill()}};
-renderShop();renderAll();
-</script>
-</body>
-</html>
+function save(){localStorage.setItem('simpleBillProducts',JSON.stringify(products));localStorage.setItem('simpleBillItems',JSON.stringify(bill));localStorage.setItem('simpleBillShop',shop)}
+function findProduct(name){return products.find(p=>p.name.toLowerCase()===name.trim().toLowerCase())||products.find(p=>p.name.toLowerCase().startsWith(name.trim().toLowerCase()))}
+function addItem(name,rate,qty){qty=Number(qty);rate=Number(rate);if(!name||!Number.isFinite(rate)||rate<0||!Number.isFinite(qty)||qty<=0)return false;const old=bill.find(p=>p.name.toLowerCase()===name.toLowerCase()&&Number(p.rate)===rate);if(old)old.qty+=qty;else bill.push({name,rate,qty});save();return true}
+function parse(){const text=document.getElementById('itemsInput').value.trim();if(!text){document.getElementById('status').textContent='Enter one or more items first.';return}let added=0,errors=[];const lines=text.split(/\n|;/).map(s=>s.trim()).filter(Boolean);for(const line of lines){let m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)$/);if(m){let productName=m[1].trim(),rate=Number(m[2]),qty=Number(m[3]);const p=findProduct(productName);if(p){productName=p.name}if(addItem(productName,rate,qty))added++;else errors.push(line);continue}
+m=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*$/);if(m){const p=findProduct(m[1]);if(p&&addItem(p.name,p.rate,Number(m[2])))added++;else errors.push(line);continue}
+m=line.match(/^(\d+(?:\.\d+)?)\s*\*\s*(\d+(?:\.\d+)?)$/);if(m){if(addItem('Item',Number(m[1]),Number(m[2])))added++;continue}errors.push(line)}
+renderBill();document.getElementById('status').textContent=added+' item line(s) added.'+(errors.length?' Could not read: '+errors.join(', '):'');if(added)document.getElementById('itemsInput').value=''}
+function renderBill(){document.getElementById('billRows').innerHTML=bill.map((p,i)=>'<tr><td>'+esc(p.name)+'</td><td class="num">'+p.qty+'</td><td class="num">'+money(p.rate)+'</td><td class="num">'+money(p.qty*p.rate)+'</td><td class="no-print"><button class="red small" data-remove="'+i+'">Remove</button></td></tr>').join('');document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{bill.splice(+b.dataset.remove,1);save();renderBill()});document.getElementById('grandTotal').textContent=money(bill.reduce((s,p)=>s+p.rate*p.qty,0));document.getElementById('count') .textContent='('+bill.reduce((s,p)=>s+Number(p.qty),0)+' items)'}
+function renderProducts(){document.getElementById('productList').innerHTML=products.map((p,i)=>'<div class="manage"><input data-pname="'+i+'" value="'+esc(p.name)+'" aria-label="Product name"><input data-prate="'+i+'" type="number" min="0" step=".01" value="'+p.rate+'" aria-label="Rate"><button class="red small" data-del="'+i+'">Delete</button></div>').join('');document.querySelectorAll('[data-pname]').forEach(el=>el.onchange=()=>{products[+el.dataset.pname].name=el.value.trim()||'Product';save();renderProducts()});document.querySelectorAll('[data-prate]').forEach(el=>el.onchange=()=>{products[+el.dataset.prate].rate=Math.max(0,Number(el.value)||0);save();renderProducts()});document.querySelectorAll('[data-del]').forEach(el=>el.onclick=()=>{products.splice(+el.dataset.del,1);save();renderProducts()})}
+document.getElementById('addBtn').onclick=parse;document.getElementById('clearText').onclick=()=>{document.getElementById('itemsInput').value='';document.getElementById('status').textContent=''};
+document.getElementById('saveProduct').onclick=()=>{const name=document.getElementById('productName').value.trim(),rate=document.getElementById('productRate').value;if(!name||rate===''||Number(rate)<0){alert('Enter product name and rate.');return}const old=products.find(p=>p.name.toLowerCase()===name.toLowerCase());if(old)old.rate=Number(rate);else products.push({name,rate:Number(rate)});save();renderProducts();document.getElementById('productName').value='';document.getElementById('productRate').value=''};
+document.getElementById('shopNameBtn').onclick=()=>{const name=prompt('Enter shop name',shop);if(name&&name.trim()){shop=name.trim();document.getElementById('shopTitle').textContent=shop;save()}};
+document.getElementById('clearBill').onclick=()=>{if(confirm('Clear all items from this bill?')){bill=[];save();renderBill()}};
+document.getElementById('printBtn').onclick=()=>{const old=document.title;document.title=shop+' Bill';window.print();document.title=old};
+document.getElementById('receiptBtn').onclick=()=>{const w=window.open('','_blank');if(!w){alert('Allow pop-ups to open receipt.');return}const rows=bill.map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+p.qty+'</td><td>'+money(p.rate)+'</td><td>'+money(p.qty*p.rate)+'</td></tr>').join('');const customer=esc(document.getElementById('customer').value.trim());w.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>'+esc(shop)+' Receipt</title><style>body{font:15px system-ui;padding:20px;max-width:700px;margin:auto}table{width:100%;border-collapse:collapse}td,th{padding:9px 4px;border-bottom:1px solid #ddd;text-align:left}.total{text-align:right;font-size:24px;font-weight:bold;margin-top:20px}button{padding:10px}@media print{button{display:none}}</style></head><body><h2>'+esc(shop)+'</h2><p>'+new Date().toLocaleString('en-IN')+(customer?' · Customer: '+customer:'')+'</p><table><thead><tr><th>Product</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody>'+rows+'</tbody></table><div class="total">Grand Total: '+money(bill.reduce((s,p)=>s+p.rate*p.qty,0))+'</div><p><button onclick="print()">Print receipt</button></p></body></html>');w.document.close()};
+document.getElementById('shopTitle').textContent=shop;renderProducts();renderBill();
+</script></body></html>
