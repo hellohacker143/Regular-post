@@ -33,11 +33,11 @@ footer{text-align:center;padding:12px;color:var(--muted);font-size:12px}
 <main class="wrap">
 <section class="card entry-card">
 <h2>⌨️ Quick entry</h2>
-<div class="muted">Tap letters on the on-page keyboard, then quantity. Example: tap <b>c</b>, tap <b>6</b>, tap <b>Add to bill</b> → Chams × 6 = ₹540. Your phone keyboard stays hidden.</div>
-<textarea id="bulkInput" class="entry" rows="2" placeholder="Tap k then 5, or enter bulk lines" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="none" aria-label="Billing entry — use the web keyboard below"></textarea>
+<div class="muted">Type directly in this text field: <b>Kings 219*5</b> or <b>Chams 90*6</b>, then tap <b>Add to bill</b>. You can enter multiple items on separate lines.</div>
+<textarea id="bulkInput" class="entry" rows="2" placeholder="Kings 219*5&#10;Chams 90*6" autocomplete="off" autocapitalize="words" spellcheck="false" inputmode="text" aria-label="Billing entry — use the web keyboard below"></textarea>
 <div id="suggestions" class="suggestions" aria-live="polite"></div>
 <div class="row" style="margin-top:8px"><button id="addLines" style="flex:1">Add to bill</button><button class="secondary" id="clearInput">Clear text</button></div>
-<div class="hint">Shortcuts: <b>k</b> Kings ₹219 · <b>c</b> Chams ₹90 · <b>a</b> American ₹140 · <b>p</b> Parle-G ₹108 · <b>m</b> Moms Magic ₹108 · <b>v</b> Vijaya Milk ₹30. Bulk examples: <b>c 6</b>, <b>k 5</b>, <b>Chams 90*5</b>, <b>245*1</b>.</div>
+<div class="hint">Shortcuts: <b>k</b> Kings ₹219 · <b>c</b> Chams ₹90 · <b>a</b> American ₹140 · <b>p</b> Parle-G ₹108 · <b>m</b> Moms Magic ₹108 · <b>v</b> Vijaya Milk ₹30. Examples: <b>Kings 219*5</b>, <b>Chams 90*6</b>, <b>American 140*2</b>. Enter one item per line.</div>
 <h2 style="margin-top:18px">Product keyboard</h2>
 <div class="quick" id="quickKeys"></div>
 <div class="pad" id="customPad" aria-label="On-screen keyboard">
