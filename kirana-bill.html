@@ -272,32 +272,32 @@ function renderSavedBills(){
 function parseNamedEntries(input){
  const parsed=[],errors=[];
  // Each line accepts "Kings 219 * 5", "Kings 5 219", or "Kings 219".
- const lines=input.split(/\\n+/).map(s=>s.trim()).filter(Boolean);
+ const lines=input.split(/\n+/).map(s=>s.trim()).filter(Boolean);
  for(const line of lines){
-  const shortcut=line.match(/^([a-z])\\s*\\*\\s*(\\d+(?:\\.\\d+)?)$/i);
+  const shortcut=line.match(/^([a-z])\s*\*\s*(\d+(?:\.\d+)?)$/i);
   if(shortcut){const matches=getSavedProducts().filter(p=>p.name.toLowerCase().startsWith(shortcut[1].toLowerCase()));if(matches.length===1){parsed.push({name:matches[0].name,qty:Number(shortcut[2]),rate:Number(matches[0].rate)});continue}if(matches.length>1){errors.push(line+" (shortcut matches multiple products)");continue}}
-  const match=line.match(/^(.+?)\\s+(\\d+(?:\\.\\d+)?)\\s*(?:\\*|x|×)\\s*(\\d+(?:\\.\\d+)?)$/i);
+  const match=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*(?:\*|x|×)\s*(\d+(?:\.\d+)?)$/i);
   if(match){
    const name=match[1].trim(),a=Number(match[2]),b=Number(match[3]);
    // name rate*quantity format, e.g. Kings 219*5
    parsed.push({name,qty:b,rate:a});addSavedProduct(name,a);continue;
   }
-  const tokens=line.replace(/,/g," ").split(/\\s+/);
+  const tokens=line.replace(/,/g," ").split(/\s+/);
   if(tokens.length>=3){
    const last=tokens[tokens.length-1],prev=tokens[tokens.length-2];
-   if(/^\\d+(?:\\.\\d+)?$/.test(last)&&/^\\d+(?:\\.\\d+)?$/.test(prev)){
+   if(/^\d+(?:\.\d+)?$/.test(last)&&/^\d+(?:\.\d+)?$/.test(prev)){
     // Natural entry: name quantity rate (Kings 5 219)
     const name=tokens.slice(0,-2).join(" ").trim(),qty=Number(prev),rate=Number(last);
     parsed.push({name,qty,rate});addSavedProduct(name,rate);continue;
    }
   }
-  const priceOnly=line.match(/^(.+?)\\s+(?:₹|rs\\.?\\s*)?(\\d+(?:\\.\\d+)?)$/i);
+  const priceOnly=line.match(/^(.+?)\s+(?:₹|rs\.?\s*)?(\d+(?:\.\d+)?)$/i);
   if(priceOnly){
    const name=priceOnly[1].trim(),rate=Number(priceOnly[2]);
    addSavedProduct(name,rate);parsed.push({name,qty:1,rate});continue;
   }
   // Backward-compatible unnamed quick math: 245*1 or 35*6.
-  const direct=line.match(/^(\\d+(?:\\.\\d+)?)\\s*([/*xX])\\s*(\\d+(?:\\.\\d+)?)$/);
+  const direct=line.match(/^(\d+(?:\.\d+)?)\s*([/*xX])\s*(\d+(?:\.\d+)?)$/);
   if(direct){
    const a=Number(direct[1]),b=Number(direct[3]),op=direct[2];
    let qty,rate;
