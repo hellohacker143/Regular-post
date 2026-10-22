@@ -420,7 +420,7 @@ function openBillInNewTab(hideBillInfo=true, autoPrint=false){
 }
 $("printBill").addEventListener("click",()=>openBillInNewTab(false,true));
 $("discount").addEventListener("input",calculate);
-$("toggleAddProduct").addEventListener("click",()=>{addRow({name:"",qty:1,rate:0});const rows=$("itemRows").querySelectorAll("tr");rows[rows.length-1]?.querySelector(".product")?.focus();$("quickMessage").textContent="New bill item added. Type a product name; saved product suggestions appear. Enter quantity and rate.";});
+$("toggleAddProduct").addEventListener("click",()=>{const row=addRow({name:"",qty:1,rate:0});row.querySelector(".product").focus();$("quickMessage").textContent="New item added below. Enter product name, quantity, and rate; amount and bill total calculate automatically.";});
 $("saveProductRate").addEventListener("click",saveRateFromFields);
 $("productSearch").addEventListener("input",renderProductListing);
 $("newProductName").addEventListener("keydown",event=>{if(event.key==="Enter")$("newProductRate").focus()});
