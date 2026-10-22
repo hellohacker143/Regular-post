@@ -454,6 +454,29 @@ $("saveProductRate").addEventListener("click",saveRateFromFields);
 $("productSearch").addEventListener("input",renderProductListing);
 $("newProductName").addEventListener("keydown",event=>{if(event.key==="Enter")$("newProductRate").focus()});
 $("newProductRate").addEventListener("keydown",event=>{if(event.key==="Enter")saveRateFromFields()});
+// Preload these starter products and shortcuts on each browser/device.
+function seedDefaultProducts(){
+ const defaults=[
+  {name:"Kings",rate:219,shortcut:"k"},
+  {name:"Vimal",rate:300,shortcut:"vl"},
+  {name:"Chams",rate:90,shortcut:"c"},
+  {name:"Parle-G",rate:108,shortcut:"pg"},
+  {name:"Coca Cola",rate:40,shortcut:"cc"},
+  {name:"Thums Up",rate:40,shortcut:"tu"},
+  {name:"Sprite",rate:40,shortcut:"sp"},
+  {name:"Fanta",rate:40,shortcut:"f"},
+  {name:"Maaza",rate:45,shortcut:"mz"},
+  {name:"Vijaya Milk",rate:62,shortcut:"vm"}
+ ];
+ const products=getSavedProducts();
+ defaults.forEach(item=>{
+  const existing=products.find(p=>p.name.toLowerCase()===item.name.toLowerCase());
+  if(existing){existing.rate=item.rate;existing.shortcut=item.shortcut;}
+  else products.push(item);
+ });
+ saveProducts(products);
+}
+seedDefaultProducts();
 applyShopName(getShopName());
 renderProductListing();
 renderSavedBills();
