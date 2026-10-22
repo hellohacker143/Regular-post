@@ -160,7 +160,7 @@ body.bill-only #quickEntryModal{display:none!important}
   <div id="addProductPanel" class="product-modal" hidden role="dialog" aria-modal="true" aria-labelledby="newProductTitle"><div class="product-modal-card"><div class="product-modal-head"><h2 id="newProductTitle">＋ Add New Products</h2><button type="button" id="closeProductModal" class="modal-close" aria-label="Close">×</button></div>
   <label for="newProductName" style="display:block;font-weight:700;margin-bottom:7px">Product name</label>
   <div class="save-product-form"><input id="newProductName" type="text" placeholder="e.g. Parle-G or Gold Flake"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 108"><input id="newProductShortcut" type="text" maxlength="8" placeholder="Shortcut, e.g. pg" aria-label="Custom product shortcut"></div>
-  <label for="newProductVariants" style="display:block;font-weight:700;margin:10px 0 7px">Variants (one per line: name, rate, shortcut)</label><textarea id="newProductVariants" rows="3" placeholder="5 Rs, 108, pg5&#10;10 Rs, 200, pg10" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea><label for="bulkProductLines" style="display:block;font-weight:700;margin:12px 0 7px">Bulk products (one per line: name, rate, shortcut)</label><textarea id="bulkProductLines" rows="4" placeholder="Kings, 219, k&#10;Chams, 90, c&#10;Vimal, 300, v" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea><p style="font-size:13px;color:#64748b;margin:5px 0">Example: Kings, 219, k — add many products at once.</p>
+  <label for="newProductVariants" style="display:block;font-weight:700;margin:10px 0 7px">Variants (one per line: name, rate, shortcut)</label><textarea id="newProductVariants" rows="3" placeholder="5 Rs, 108, pg5&#10;10 Rs, 200, pg10" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea><label for="bulkProductLines" style="display:block;font-weight:700;margin:12px 0 7px">Bulk products (name rate shortcut, comma-separated)</label><textarea id="bulkProductLines" rows="4" placeholder="Kings 219 k, Vimal 300 vl&#10;Chams 90 c, Parle-G 108 pg&#10;Or one per line: Kings, 219, k" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea><p style="font-size:13px;color:#64748b;margin:5px 0">Example: Kings 219 k, Vimal 300 vl — add many products at once, or use one product per line.</p>
   <button type="button" id="saveProductRate" style="margin-top:8px">Save Product & Variants</button><div id="productSaveMessage" class="product-save-message" aria-live="polite"></div>
   <label for="productSearch" style="display:block;font-weight:700;margin:14px 0 7px">🔍 Search / manage saved products</label><input id="productSearch" type="search" placeholder="Search product or variant" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"><div id="productListing" class="product-listing"></div></div></div>
   <div id="savedBillsListing" hidden></div>
@@ -335,7 +335,27 @@ function addQuickProducts(){
   calculate();renderProductListing();
  }else message.textContent="Could not read that. Try Kings 219*5, Kings 5 219, or 245*1.";
 }
-function saveBulkProductLines(){const text=$("bulkProductLines").value.trim();if(!text)return false;const entries=[];for(const [i,line] of text.split(/\n+/).map(x=>x.trim()).filter(Boolean).entries()){const p=line.split(",").map(x=>x.trim());if(p.length<2||!p[0]||!Number.isFinite(Number(p[1]))||Number(p[1])<0){$("productSaveMessage").textContent="Line "+(i+1)+": use Product name, rate, shortcut.";return true}const key=(p[2]||"").toLowerCase();if(key&&!/^[a-z0-9_-]{1,8}$/.test(key)){$("productSaveMessage").textContent="Invalid shortcut on line "+(i+1);return true}entries.push({name:p[0],rate:Number(p[1]),shortcut:key})}const existing=getSavedProducts();for(const e of entries){if(e.shortcut&&existing.some(x=>x.name.toLowerCase()!==e.name.toLowerCase()&&(x.shortcut||x.name.slice(0,3)).toLowerCase()===e.shortcut)){$("productSaveMessage").textContent="Shortcut "+e.shortcut+" is already used.";return true}}for(const e of entries){addSavedProduct(e.name,e.rate);const list=getSavedProducts(),p=list.find(x=>x.name.toLowerCase()===e.name.toLowerCase());if(e.shortcut)p.shortcut=e.shortcut;saveProducts(list)}$("bulkProductLines").value="";$("productSaveMessage").textContent="Saved "+entries.length+" products. You can now use their shortcuts in Quick Bill Entry.";renderProductListing();return true}
+function saveBulkProductLines(){
+ const text=$("bulkProductLines").value.trim();if(!text)return false;
+ const entries=[];let lineNo=0;
+ for(const rawLine of text.split(/\n+/).map(x=>x.trim()).filter(Boolean)){
+  lineNo++;
+  const chunks=rawLine.split(",").map(x=>x.trim()).filter(Boolean);
+  let groups=[];
+  if(chunks.length===3 && /^\d+(?:\.\d+)?$/.test(chunks[1])) groups=[chunks];
+  else {
+   for(const chunk of chunks){
+    const m=chunk.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s+([a-z0-9_-]{1,8})$/i);
+    if(!m){$("productSaveMessage").textContent="Line "+lineNo+": use Kings 219 k, Vimal 300 vl (comma-separated), or Kings, 219, k.";return true}
+    groups.push([m[1],m[2],m[3]]);
+   }
+  }
+  for(const p of groups){if(p.length<2||!p[0]||!Number.isFinite(Number(p[1]))||Number(p[1])<0){$("productSaveMessage").textContent="Line "+lineNo+": check product name and rate.";return true}const key=(p[2]||"").toLowerCase();if(key&&!/^[a-z0-9_-]{1,8}$/.test(key)){$("productSaveMessage").textContent="Invalid shortcut on line "+lineNo;return true}entries.push({name:p[0],rate:Number(p[1]),shortcut:key})}
+ }
+ const existing=getSavedProducts();for(const e of entries){if(e.shortcut&&existing.some(x=>x.name.toLowerCase()!==e.name.toLowerCase()&&(x.shortcut||x.name.slice(0,3)).toLowerCase()===e.shortcut)){$("productSaveMessage").textContent="Shortcut "+e.shortcut+" is already used.";return true}}
+ for(const e of entries){addSavedProduct(e.name,e.rate);const list=getSavedProducts(),p=list.find(x=>x.name.toLowerCase()===e.name.toLowerCase());if(e.shortcut)p.shortcut=e.shortcut;saveProducts(list)}
+ $("bulkProductLines").value="";$("productSaveMessage").textContent="Saved "+entries.length+" products. Shortcuts are ready to use.";renderProductListing();return true
+}
 function saveRateFromFields(){
  if(saveBulkProductLines())return;
  const name=$("newProductName").value.trim(),rate=Number($("newProductRate").value),shortcut=$("newProductShortcut").value.trim().toLowerCase(),variantsText=$("newProductVariants").value.trim();
