@@ -125,6 +125,8 @@ body.bill-only #quickEntryModal{display:none!important}
     <button class="secondary" type="button" id="settingsButton">⚙️ Settings</button>
     <button class="secondary" type="button" id="addItem">+ Add item / Bulk</button>
     <button class="secondary" type="button" id="deleteAllItems">Delete all items</button>
+    <button class="secondary" type="button" id="saveBillButton">💾 Save bill</button>
+    <button class="secondary" type="button" id="showBillsButton">📋 Previous bills</button>
     <button class="secondary" type="button" id="resetBill">New empty bill</button>
     <button class="secondary" type="button" id="toggleBillView" aria-label="Show bill only" title="Show bill only">👁️</button>
     <button class="secondary" type="button" id="openBill">Open bill in new tab</button>
@@ -155,6 +157,8 @@ body.bill-only #quickEntryModal{display:none!important}
   <div class="save-product-form"><input id="newProductName" type="text" placeholder="Product name, e.g. Kings"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 219"><button type="button" id="saveProductRate">+ Save product</button></div>
   <div id="productSaveMessage" class="product-save-message" aria-live="polite"></div>
   <div id="productListing" class="product-listing"></div>
+  <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
+  <label style="display:block;font-weight:700;margin-bottom:7px">Previous saved bills</label><div id="savedBillsListing" class="product-listing"></div>
 </div></div>
 <section class="receipt" id="receipt">
   <h1 class="store-name">SAI KIRANA STORE</h1>
@@ -248,6 +252,22 @@ function renderProductListing(){
  }));
 }
 function escapeHTML(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+
+function saveCurrentBill(){
+ const items=[...$("itemRows").rows].map(tr=>({name:tr.querySelector(".product").value,qty:Number(tr.querySelector(".quantity").value)||0,rate:Number(tr.querySelector(".price").value)||0})).filter(x=>x.name||x.qty||x.rate);
+ if(!items.length){alert("Add products before saving a bill.");return}
+ const bills=loadBills();const bill={id:Date.now(),date:new Date().toLocaleString("en-IN"),items,discount:Number($("discount").value)||0,total:items.reduce((s,x)=>s+x.qty*x.rate,0)-(Number($("discount").value)||0)};
+ bills.unshift(bill);try{localStorage.setItem("kiranaSavedBills",JSON.stringify(bills.slice(0,50)));renderSavedBills();alert("Bill saved successfully.");}catch(e){alert("Could not save bill in this browser.");}
+}
+function loadBills(){try{return JSON.parse(localStorage.getItem("kiranaSavedBills")||"[]")}catch(e){return []}}
+function renderSavedBills(){
+ const wrap=$("savedBillsListing");if(!wrap)return;const bills=loadBills();
+ wrap.innerHTML='<div class="product-list-head"><strong>Saved bills</strong><span>'+bills.length+' bills</span></div>'+
+ (bills.length?bills.map(b=>'<div class="saved-product"><button type="button" class="product-pick" data-bill="'+b.id+'"><span>'+escapeHTML(b.date)+'<br><small>'+b.items.length+' products</small></span><b>'+money(b.total)+'</b></button><button type="button" class="product-remove secondary" data-bill-delete="'+b.id+'" aria-label="Delete saved bill">×</button></div>').join(""):'<p class="product-empty">No saved bills yet.</p>');
+ wrap.querySelectorAll("[data-bill]").forEach(btn=>btn.addEventListener("click",()=>{const b=loadBills().find(x=>x.id===Number(btn.dataset.bill));if(!b)return;$("itemRows").innerHTML="";b.items.forEach(addRow);$("discount").value=b.discount||0;calculate();}));
+ wrap.querySelectorAll("[data-bill-delete]").forEach(btn=>btn.addEventListener("click",()=>{if(confirm("Delete this saved bill?")){localStorage.setItem("kiranaSavedBills",JSON.stringify(loadBills().filter(x=>x.id!==Number(btn.dataset.bill))));renderSavedBills();}}));
+}
+
 function parseNamedEntries(input){
  const parsed=[],errors=[];
  // Each line accepts "Kings 219 * 5", "Kings 5 219", or "Kings 219".
@@ -302,10 +322,12 @@ function saveRateFromFields(){
  }
  addSavedProduct(name,rate);
  $("newProductName").value="";$("newProductRate").value="";
- $("productSaveMessage").textContent=name+" saved at ₹"+rate+". Type ""+name+" "+rate+" * 5" to bill five.";
+ $("productSaveMessage").textContent=name+" saved at ₹"+rate+". Type "+name+" "+rate+"*5 to bill five.";
 }
 
 $("addQuickProducts").addEventListener("click",addQuickProducts);
+$("saveBillButton").addEventListener("click",saveCurrentBill);
+$("showBillsButton").addEventListener("click",()=>{$("savedBillsListing").scrollIntoView({behavior:"smooth",block:"center"});});
 $("clearQuickProducts").addEventListener("click",()=>{$("quickProducts").value="";$("quickMessage").textContent="Entry cleared.";$("quickProducts").focus()});
 $("quickProducts").addEventListener("keydown",event=>{
  if(event.key==="Enter" && !event.shiftKey){event.preventDefault();addQuickProducts()}
@@ -384,6 +406,7 @@ $("newProductName").addEventListener("keydown",event=>{if(event.key==="Enter")$(
 $("newProductRate").addEventListener("keydown",event=>{if(event.key==="Enter")saveRateFromFields()});
 applyShopName(getShopName());
 renderProductListing();
+renderSavedBills();
 reset();
 </script>
 </body>
