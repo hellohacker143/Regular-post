@@ -148,9 +148,12 @@ body.bill-only #quickEntryModal{display:none!important}
   </div>
   <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Example: Kings 219*5 adds Kings, rate ₹219, quantity 5. Add a rate once below to save it for future bills.</div>
   <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
-  <label for="newProductName" style="display:block;font-weight:700;margin-bottom:7px">Save a product and its rate</label>
-  <div class="save-product-form"><input id="newProductName" type="text" placeholder="Product name, e.g. Kings"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 219"><input id="newProductShortcut" type="text" maxlength="8" placeholder="Custom shortcut, e.g. kk" aria-label="Custom product shortcut"><button type="button" id="saveProductRate">+ Save product</button></div>
-  <div id="productSaveMessage" class="product-save-message" aria-live="polite"></div>
+  <button class="secondary" type="button" id="toggleAddProduct">＋ Add Product</button>
+  <div id="addProductPanel" hidden style="margin-top:12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff">
+  <label for="newProductName" style="display:block;font-weight:700;margin-bottom:7px">Product name</label>
+  <div class="save-product-form"><input id="newProductName" type="text" placeholder="e.g. Parle-G or Gold Flake"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 108"><input id="newProductShortcut" type="text" maxlength="8" placeholder="Custom shortcut, e.g. pg" aria-label="Custom product shortcut"></div>
+  <label for="newProductVariants" style="display:block;font-weight:700;margin:10px 0 7px">Variants (one per line: variant name, rate, shortcut)</label><textarea id="newProductVariants" rows="3" placeholder="5 Rs, 108, pg5&#10;10 Rs, 200, pg10" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea>
+  <button type="button" id="saveProductRate" style="margin-top:8px">Save Product & Variants</button><div id="productSaveMessage" class="product-save-message" aria-live="polite"></div></div>
   <input id="productSearch" type="search" placeholder="🔍 Search saved products" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial;margin-top:10px"><div id="productListing" class="product-listing"></div>
   <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
   <label style="display:block;font-weight:700;margin-bottom:7px">Previous saved bills</label><div id="savedBillsListing" class="product-listing"></div>
@@ -308,7 +311,7 @@ function renderShortcutSuggestions(){
  const box=$("shortcutSuggestions"),ta=$("quickProducts");if(!box||!ta)return;
  const lines=ta.value.split("\n"),q=lines[lines.length-1].trim().toLowerCase();
  if(!q||/[0-9*×]/.test(q)){hideShortcutSuggestions();return;}
- const products=getSavedProducts().filter(p=>p.name.toLowerCase().startsWith(q)||p.name.slice(0,3).toLowerCase().startsWith(q)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,8);
+ const products=getSavedProducts().filter(p=>p.name.toLowerCase().startsWith(q)||(p.parentName||"").toLowerCase().startsWith(q)||(p.shortcut||p.name.slice(0,3)).toLowerCase().startsWith(q)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,8);
  if(!products.length){hideShortcutSuggestions();return;}
  box.innerHTML=products.map((p,i)=>'<button type="button" class="shortcut-suggestion" data-suggest="' + i + '"><span><strong>' + escapeHTML(p.name) + '</strong><br><small>Shortcut: ' + escapeHTML(p.shortcut||p.name.slice(0,3).toLowerCase()) + '</small></span><b>₹' + Number(p.rate).toLocaleString("en-IN",{maximumFractionDigits:2}) + '</b></button>').join("");
  box.classList.add("show");
@@ -326,16 +329,15 @@ function addQuickProducts(){
  }else message.textContent="Could not read that. Try Kings 219*5, Kings 5 219, or 245*1.";
 }
 function saveRateFromFields(){
- const name=$("newProductName").value.trim(),rate=Number($("newProductRate").value),shortcut=$("newProductShortcut").value.trim().toLowerCase();
+ const name=$("newProductName").value.trim(),rate=Number($("newProductRate").value),shortcut=$("newProductShortcut").value.trim().toLowerCase(),variantsText=$("newProductVariants").value.trim();
+ if(!name){$("productSaveMessage").textContent="Enter a product name.";return}
+ if(!variantsText&&($("newProductRate").value.trim()===""||!Number.isFinite(rate)||rate<0)){$("productSaveMessage").textContent="Enter a valid rate or add variants.";return}
  if(shortcut&&!/^[a-z0-9_-]{1,8}$/.test(shortcut)){$("productSaveMessage").textContent="Shortcut must be 1–8 letters/numbers, _ or -.";return}
- if(!name||$("newProductRate").value.trim()===""||!Number.isFinite(rate)||rate<0){
-  $("productSaveMessage").textContent="Enter a product name and a valid rate.";return;
- }
- addSavedProduct(name,rate);
- const products=getSavedProducts(),product=products.find(p=>p.name.toLowerCase()===name.toLowerCase());
- if(shortcut){const conflict=products.find(p=>p.name.toLowerCase()!==name.toLowerCase()&&(p.shortcut||p.name.slice(0,3)).toLowerCase()===shortcut);if(conflict){$("productSaveMessage").textContent="Shortcut already used by "+conflict.name+". Choose another shortcut.";return}product.shortcut=shortcut;saveProducts(products)}
- $("newProductName").value="";$("newProductRate").value="";$("newProductShortcut").value="";
- $("productSaveMessage").textContent=name+" saved at ₹"+rate+". Shortcut: "+(shortcut||name.slice(0,3).toLowerCase())+". Type "+(shortcut||name.slice(0,3).toLowerCase())+"*5 to bill five.";
+ const entries=[];if(!variantsText)entries.push({name,rate,shortcut});
+ if(variantsText){for(const [i,line] of variantsText.split(/\\n+/).map(x=>x.trim()).filter(Boolean).entries()){const parts=line.split(",").map(x=>x.trim());if(parts.length<2||!parts[0]||!Number.isFinite(Number(parts[1]))||Number(parts[1])<0){$("productSaveMessage").textContent="Variant line "+(i+1)+" format: variant name, rate, shortcut (optional).";return}entries.push({name:name+" "+parts[0],rate:Number(parts[1]),shortcut:(parts[2]||"").toLowerCase(),parentName:name})}}
+ const existing=getSavedProducts();for(const e of entries){if(e.shortcut&&!/^[a-z0-9_-]{1,8}$/.test(e.shortcut)){$("productSaveMessage").textContent="Each shortcut must be 1–8 letters/numbers, _ or -.";return}const key=e.shortcut||e.name.slice(0,3).toLowerCase();if(existing.some(p=>p.name.toLowerCase()!==e.name.toLowerCase()&&(p.shortcut||p.name.slice(0,3)).toLowerCase()===key)){$("productSaveMessage").textContent="Shortcut "+key+" is already used. Choose another.";return}}
+ for(const e of entries){addSavedProduct(e.name,e.rate);const list=getSavedProducts(),p=list.find(x=>x.name.toLowerCase()===e.name.toLowerCase());if(e.shortcut)p.shortcut=e.shortcut;if(e.parentName)p.parentName=e.parentName;saveProducts(list)}
+ $("newProductName").value="";$("newProductRate").value="";$("newProductShortcut").value="";$("newProductVariants").value="";$("productSaveMessage").textContent="Saved "+entries.length+" product option(s). Type "+name+" in Quick bill entry to see suggestions.";renderProductListing();
 }
 
 $("addQuickProducts").addEventListener("click",addQuickProducts);
@@ -414,6 +416,7 @@ function openBillInNewTab(hideBillInfo=true, autoPrint=false){
 }
 $("printBill").addEventListener("click",()=>openBillInNewTab(false,true));
 $("discount").addEventListener("input",calculate);
+$("toggleAddProduct").addEventListener("click",()=>{const panel=$("addProductPanel");panel.hidden=!panel.hidden;if(!panel.hidden)$("newProductName").focus()});
 $("saveProductRate").addEventListener("click",saveRateFromFields);
 $("productSearch").addEventListener("input",renderProductListing);
 $("newProductName").addEventListener("keydown",event=>{if(event.key==="Enter")$("newProductRate").focus()});
