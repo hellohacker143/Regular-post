@@ -154,7 +154,7 @@ body.bill-only #quickEntryModal{display:none!important}
   <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Example: Kings 219*5 adds Kings, rate ₹219, quantity 5. Add a rate once below to save it for future bills.</div>
   <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
   <label for="newProductName" style="display:block;font-weight:700;margin-bottom:7px">Save a product and its rate</label>
-  <div class="save-product-form"><input id="newProductName" type="text" placeholder="Product name, e.g. Kings"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 219"><button type="button" id="saveProductRate">+ Save product</button></div>
+  <div class="save-product-form"><input id="newProductName" type="text" placeholder="Product name, e.g. Kings"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 219"><input id="newProductShortcut" type="text" maxlength="8" placeholder="Custom shortcut, e.g. kk" aria-label="Custom product shortcut"><button type="button" id="saveProductRate">+ Save product</button></div>
   <div id="productSaveMessage" class="product-save-message" aria-live="polite"></div>
   <input id="productSearch" type="search" placeholder="🔍 Search saved products" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial;margin-top:10px"><div id="productListing" class="product-listing"></div>
   <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
@@ -241,7 +241,7 @@ function renderProductListing(){
  const query=($("productSearch")?.value||"").trim().toLowerCase();
  const products=getSavedProducts().filter(p=>p.name.toLowerCase().includes(query)).sort((a,b)=>a.name.localeCompare(b.name));
  wrap.innerHTML='<div class="product-list-head"><strong>Saved product rates</strong><span>'+products.length+' products</span></div>'+
- (products.length?products.map((p,i)=>'<div class="saved-product"><button type="button" class="product-pick" data-index="'+i+'"><span>'+escapeHTML(p.name)+'</span><b>₹'+Number(p.rate).toLocaleString("en-IN",{maximumFractionDigits:2})+'</b></button><button type="button" class="product-remove secondary" data-remove="'+i+'" aria-label="Remove '+escapeHTML(p.name)+'">×</button></div>').join(""):'<p class="product-empty">Add saved rates below, e.g. Kings — 219.</p>');
+ (products.length?products.map((p,i)=>'<div class="saved-product"><button type="button" class="product-pick" data-index="'+i+'"><span>'+escapeHTML(p.name)+' <small>Shortcut: '+escapeHTML(p.shortcut||p.name.slice(0,3).toLowerCase())+'</small></span><b>₹'+Number(p.rate).toLocaleString("en-IN",{maximumFractionDigits:2})+'</b></button><button type="button" class="product-remove secondary" data-remove="'+i+'" aria-label="Remove '+escapeHTML(p.name)+'">×</button></div>').join(""):'<p class="product-empty">Add saved rates below, e.g. Kings — 219.</p>');
  wrap.querySelectorAll("[data-index]").forEach(btn=>btn.addEventListener("click",()=>{
    const p=products[Number(btn.dataset.index)];
    addRow({name:p.name,qty:1,rate:p.rate});
@@ -274,8 +274,8 @@ function parseNamedEntries(input){
  // Each line accepts "Kings 219 * 5", "Kings 5 219", or "Kings 219".
  const lines=input.split(/\n+/).map(s=>s.trim()).filter(Boolean);
  for(const line of lines){
-  const shortcut=line.match(/^([a-z])\s*\*\s*(\d+(?:\.\d+)?)$/i);
-  if(shortcut){const matches=getSavedProducts().filter(p=>p.name.toLowerCase().startsWith(shortcut[1].toLowerCase()));if(matches.length===1){parsed.push({name:matches[0].name,qty:Number(shortcut[2]),rate:Number(matches[0].rate)});continue}if(matches.length>1){errors.push(line+" (shortcut matches multiple products)");continue}}
+  const shortcut=line.match(/^([a-z0-9_-]{1,8})\s*\*\s*(\d+(?:\.\d+)?)$/i);
+  if(shortcut){const key=shortcut[1].toLowerCase(),matches=getSavedProducts().filter(p=>(p.shortcut||p.name.slice(0,3)).toLowerCase()===key);if(matches.length===1){parsed.push({name:matches[0].name,qty:Number(shortcut[2]),rate:Number(matches[0].rate)});continue}if(matches.length>1){errors.push(line+" (shortcut is used by multiple products)");continue}}
   const match=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*(?:\*|x|×)\s*(\d+(?:\.\d+)?)$/i);
   if(match){
    const name=match[1].trim(),a=Number(match[2]),b=Number(match[3]);
@@ -315,7 +315,7 @@ function renderShortcutSuggestions(){
  if(!q||/[0-9*×]/.test(q)){hideShortcutSuggestions();return;}
  const products=getSavedProducts().filter(p=>p.name.toLowerCase().startsWith(q)||p.name.slice(0,3).toLowerCase().startsWith(q)).sort((a,b)=>a.name.localeCompare(b.name)).slice(0,8);
  if(!products.length){hideShortcutSuggestions();return;}
- box.innerHTML=products.map((p,i)=>'<button type="button" class="shortcut-suggestion" data-suggest="' + i + '"><span><strong>' + escapeHTML(p.name) + '</strong><br><small>Shortcut: ' + escapeHTML(p.name.slice(0,3).toLowerCase()) + '</small></span><b>₹' + Number(p.rate).toLocaleString("en-IN",{maximumFractionDigits:2}) + '</b></button>').join("");
+ box.innerHTML=products.map((p,i)=>'<button type="button" class="shortcut-suggestion" data-suggest="' + i + '"><span><strong>' + escapeHTML(p.name) + '</strong><br><small>Shortcut: ' + escapeHTML(p.shortcut||p.name.slice(0,3).toLowerCase()) + '</small></span><b>₹' + Number(p.rate).toLocaleString("en-IN",{maximumFractionDigits:2}) + '</b></button>').join("");
  box.classList.add("show");
  box.querySelectorAll("[data-suggest]").forEach(btn=>btn.addEventListener("click",()=>{const p=products[Number(btn.dataset.suggest)],lines=ta.value.split("\n");lines[lines.length-1]=p.name+" "+p.rate+"*";ta.value=lines.join("\n");hideShortcutSuggestions();ta.focus();}));
 }
@@ -331,13 +331,16 @@ function addQuickProducts(){
  }else message.textContent="Could not read that. Try Kings 219*5, Kings 5 219, or 245*1.";
 }
 function saveRateFromFields(){
- const name=$("newProductName").value.trim(),rate=Number($("newProductRate").value);
+ const name=$("newProductName").value.trim(),rate=Number($("newProductRate").value),shortcut=$("newProductShortcut").value.trim().toLowerCase();
+ if(shortcut&&!/^[a-z0-9_-]{1,8}$/.test(shortcut)){$("productSaveMessage").textContent="Shortcut must be 1–8 letters/numbers, _ or -.";return}
  if(!name||$("newProductRate").value.trim()===""||!Number.isFinite(rate)||rate<0){
   $("productSaveMessage").textContent="Enter a product name and a valid rate.";return;
  }
  addSavedProduct(name,rate);
- $("newProductName").value="";$("newProductRate").value="";
- $("productSaveMessage").textContent=name+" saved at ₹"+rate+". Type "+name+" "+rate+"*5 to bill five.";
+ const products=getSavedProducts(),product=products.find(p=>p.name.toLowerCase()===name.toLowerCase());
+ if(shortcut){const conflict=products.find(p=>p.name.toLowerCase()!==name.toLowerCase()&&(p.shortcut||p.name.slice(0,3)).toLowerCase()===shortcut);if(conflict){$("productSaveMessage").textContent="Shortcut already used by "+conflict.name+". Choose another shortcut.";return}product.shortcut=shortcut;saveProducts(products)}
+ $("newProductName").value="";$("newProductRate").value="";$("newProductShortcut").value="";
+ $("productSaveMessage").textContent=name+" saved at ₹"+rate+". Shortcut: "+(shortcut||name.slice(0,3).toLowerCase())+". Type "+(shortcut||name.slice(0,3).toLowerCase())+"*5 to bill five.";
 }
 
 $("addQuickProducts").addEventListener("click",addQuickProducts);
