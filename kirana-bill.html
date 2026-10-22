@@ -122,6 +122,7 @@ body.bill-only #quickEntryModal{display:none!important}
 .product-remove{border-radius:0;margin:5px;padding:0 12px;background:#fff;color:#b91c1c;border:1px solid #e5e7eb;font-size:20px}
 .product-empty{margin:0;padding:14px;color:#64748b;font-size:14px}
 @media(max-width:520px){.save-product-form{grid-template-columns:1fr 100px}.save-product-form button{grid-column:1/-1}.product-pick{padding:11px 9px}}
+.product-modal{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.58);display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto}.product-modal[hidden]{display:none!important}.product-modal-card{width:min(100%,620px);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 60px #0004;color:#111827}.product-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.product-modal-head h2{font-size:22px;margin:0}.product-modal-head .modal-close{position:static;width:38px;height:38px;flex:0 0 38px}.product-modal-card textarea{box-sizing:border-box;max-width:100%;resize:vertical}.product-modal-card button{min-height:42px}@media(max-width:520px){.product-modal{padding:8px;align-items:flex-start}.product-modal-card{margin:8px 0;max-height:94vh;padding:14px}.product-modal-head h2{font-size:19px}.save-product-form{grid-template-columns:1fr 100px}.save-product-form input:last-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -155,13 +156,13 @@ body.bill-only #quickEntryModal{display:none!important}
   </div>
   <div id="quickMessage" aria-live="polite" style="font-size:13px;margin-top:7px;color:#475569">Example: Kings 219*5 adds Kings, rate ₹219, quantity 5. Add a rate once below to save it for future bills.</div>
   <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
-  <button class="secondary" type="button" id="toggleAddProduct">＋ Add Product</button>
-  <div id="addProductPanel" hidden style="margin-top:12px;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff">
+  <button class="secondary" type="button" id="toggleAddProduct">＋ New Product</button>
+  <div id="addProductPanel" class="product-modal" hidden role="dialog" aria-modal="true" aria-labelledby="newProductTitle"><div class="product-modal-card"><div class="product-modal-head"><h2 id="newProductTitle">＋ Add New Products</h2><button type="button" id="closeProductModal" class="modal-close" aria-label="Close">×</button></div>
   <label for="newProductName" style="display:block;font-weight:700;margin-bottom:7px">Product name</label>
   <div class="save-product-form"><input id="newProductName" type="text" placeholder="e.g. Parle-G or Gold Flake"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 108"><input id="newProductShortcut" type="text" maxlength="8" placeholder="Shortcut, e.g. pg" aria-label="Custom product shortcut"></div>
-  <label for="newProductVariants" style="display:block;font-weight:700;margin:10px 0 7px">Variants (one per line: name, rate, shortcut)</label><textarea id="newProductVariants" rows="3" placeholder="5 Rs, 108, pg5&#10;10 Rs, 200, pg10" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea>
+  <label for="newProductVariants" style="display:block;font-weight:700;margin:10px 0 7px">Variants (one per line: name, rate, shortcut)</label><textarea id="newProductVariants" rows="3" placeholder="5 Rs, 108, pg5&#10;10 Rs, 200, pg10" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea><label for="bulkProductLines" style="display:block;font-weight:700;margin:12px 0 7px">Bulk products (one per line: name, rate, shortcut)</label><textarea id="bulkProductLines" rows="4" placeholder="Kings, 219, k&#10;Chams, 90, c&#10;Vimal, 300, v" style="width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"></textarea><p style="font-size:13px;color:#64748b;margin:5px 0">Example: Kings, 219, k — add many products at once.</p>
   <button type="button" id="saveProductRate" style="margin-top:8px">Save Product & Variants</button><div id="productSaveMessage" class="product-save-message" aria-live="polite"></div>
-  <label for="productSearch" style="display:block;font-weight:700;margin:14px 0 7px">🔍 Search / manage saved products</label><input id="productSearch" type="search" placeholder="Search product or variant" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"><div id="productListing" class="product-listing"></div></div>
+  <label for="productSearch" style="display:block;font-weight:700;margin:14px 0 7px">🔍 Search / manage saved products</label><input id="productSearch" type="search" placeholder="Search product or variant" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial"><div id="productListing" class="product-listing"></div></div></div>
   <div id="savedBillsListing" hidden></div>
 </div></div>
 <section class="receipt" id="receipt">
@@ -334,7 +335,9 @@ function addQuickProducts(){
   calculate();renderProductListing();
  }else message.textContent="Could not read that. Try Kings 219*5, Kings 5 219, or 245*1.";
 }
+function saveBulkProductLines(){const text=$("bulkProductLines").value.trim();if(!text)return false;const entries=[];for(const [i,line] of text.split(/\n+/).map(x=>x.trim()).filter(Boolean).entries()){const p=line.split(",").map(x=>x.trim());if(p.length<2||!p[0]||!Number.isFinite(Number(p[1]))||Number(p[1])<0){$("productSaveMessage").textContent="Line "+(i+1)+": use Product name, rate, shortcut.";return true}const key=(p[2]||"").toLowerCase();if(key&&!/^[a-z0-9_-]{1,8}$/.test(key)){$("productSaveMessage").textContent="Invalid shortcut on line "+(i+1);return true}entries.push({name:p[0],rate:Number(p[1]),shortcut:key})}const existing=getSavedProducts();for(const e of entries){if(e.shortcut&&existing.some(x=>x.name.toLowerCase()!==e.name.toLowerCase()&&(x.shortcut||x.name.slice(0,3)).toLowerCase()===e.shortcut)){$("productSaveMessage").textContent="Shortcut "+e.shortcut+" is already used.";return true}}for(const e of entries){addSavedProduct(e.name,e.rate);const list=getSavedProducts(),p=list.find(x=>x.name.toLowerCase()===e.name.toLowerCase());if(e.shortcut)p.shortcut=e.shortcut;saveProducts(list)}$("bulkProductLines").value="";$("productSaveMessage").textContent="Saved "+entries.length+" products. You can now use their shortcuts in Quick Bill Entry.";renderProductListing();return true}
 function saveRateFromFields(){
+ if(saveBulkProductLines())return;
  const name=$("newProductName").value.trim(),rate=Number($("newProductRate").value),shortcut=$("newProductShortcut").value.trim().toLowerCase(),variantsText=$("newProductVariants").value.trim();
  if(!name){$("productSaveMessage").textContent="Enter a product name.";return}
  if(!variantsText&&($("newProductRate").value.trim()===""||!Number.isFinite(rate)||rate<0)){$("productSaveMessage").textContent="Enter a valid rate or add variants.";return}
@@ -423,7 +426,10 @@ function openBillInNewTab(hideBillInfo=true, autoPrint=false){
 }
 $("printBill").addEventListener("click",()=>openBillInNewTab(false,true));
 $("discount").addEventListener("input",calculate);
-$("toggleAddProduct").addEventListener("click",()=>{const row=addRow({name:"",qty:1,rate:0});row.querySelector(".product").focus();$("quickMessage").textContent="New item added below. Enter product name, quantity, and rate; amount and bill total calculate automatically.";});
+$("toggleAddProduct").addEventListener("click",()=>{$("addProductPanel").hidden=false;$("newProductName").focus()});
+$("closeProductModal").addEventListener("click",()=>{$("addProductPanel").hidden=true});
+$("addProductPanel").addEventListener("click",event=>{if(event.target===$("addProductPanel"))$("addProductPanel").hidden=true});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("addProductPanel").hidden)$("addProductPanel").hidden=true});
 $("saveProductRate").addEventListener("click",saveRateFromFields);
 $("productSearch").addEventListener("input",renderProductListing);
 $("newProductName").addEventListener("keydown",event=>{if(event.key==="Enter")$("newProductRate").focus()});
