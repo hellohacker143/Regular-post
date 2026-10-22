@@ -156,7 +156,7 @@ body.bill-only #quickEntryModal{display:none!important}
   <label for="newProductName" style="display:block;font-weight:700;margin-bottom:7px">Save a product and its rate</label>
   <div class="save-product-form"><input id="newProductName" type="text" placeholder="Product name, e.g. Kings"><input id="newProductRate" type="number" min="0" step=".01" placeholder="Rate, e.g. 219"><button type="button" id="saveProductRate">+ Save product</button></div>
   <div id="productSaveMessage" class="product-save-message" aria-live="polite"></div>
-  <div id="productListing" class="product-listing"></div>
+  <input id="productSearch" type="search" placeholder="🔍 Search saved products" style="width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:16px Arial;margin-top:10px"><div id="productListing" class="product-listing"></div>
   <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
   <label style="display:block;font-weight:700;margin-bottom:7px">Previous saved bills</label><div id="savedBillsListing" class="product-listing"></div>
 </div></div>
@@ -238,7 +238,8 @@ function addSavedProduct(name, rate){
 function renderProductListing(){
  const wrap=$("productListing");
  if(!wrap)return;
- const products=getSavedProducts().sort((a,b)=>a.name.localeCompare(b.name));
+ const query=($("productSearch")?.value||"").trim().toLowerCase();
+ const products=getSavedProducts().filter(p=>p.name.toLowerCase().includes(query)).sort((a,b)=>a.name.localeCompare(b.name));
  wrap.innerHTML='<div class="product-list-head"><strong>Saved product rates</strong><span>'+products.length+' products</span></div>'+
  (products.length?products.map((p,i)=>'<div class="saved-product"><button type="button" class="product-pick" data-index="'+i+'"><span>'+escapeHTML(p.name)+'</span><b>₹'+Number(p.rate).toLocaleString("en-IN",{maximumFractionDigits:2})+'</b></button><button type="button" class="product-remove secondary" data-remove="'+i+'" aria-label="Remove '+escapeHTML(p.name)+'">×</button></div>').join(""):'<p class="product-empty">Add saved rates below, e.g. Kings — 219.</p>');
  wrap.querySelectorAll("[data-index]").forEach(btn=>btn.addEventListener("click",()=>{
@@ -273,6 +274,8 @@ function parseNamedEntries(input){
  // Each line accepts "Kings 219 * 5", "Kings 5 219", or "Kings 219".
  const lines=input.split(/\\n+/).map(s=>s.trim()).filter(Boolean);
  for(const line of lines){
+  const shortcut=line.match(/^([a-z])\\s*\\*\\s*(\\d+(?:\\.\\d+)?)$/i);
+  if(shortcut){const matches=getSavedProducts().filter(p=>p.name.toLowerCase().startsWith(shortcut[1].toLowerCase()));if(matches.length===1){parsed.push({name:matches[0].name,qty:Number(shortcut[2]),rate:Number(matches[0].rate)});continue}if(matches.length>1){errors.push(line+" (shortcut matches multiple products)");continue}}
   const match=line.match(/^(.+?)\\s+(\\d+(?:\\.\\d+)?)\\s*(?:\\*|x|×)\\s*(\\d+(?:\\.\\d+)?)$/i);
   if(match){
    const name=match[1].trim(),a=Number(match[2]),b=Number(match[3]);
@@ -402,6 +405,7 @@ function openBillInNewTab(hideBillInfo=true, autoPrint=false){
 $("printBill").addEventListener("click",()=>openBillInNewTab(false,true));
 $("discount").addEventListener("input",calculate);
 $("saveProductRate").addEventListener("click",saveRateFromFields);
+$("productSearch").addEventListener("input",renderProductListing);
 $("newProductName").addEventListener("keydown",event=>{if(event.key==="Enter")$("newProductRate").focus()});
 $("newProductRate").addEventListener("keydown",event=>{if(event.key==="Enter")saveRateFromFields()});
 applyShopName(getShopName());
